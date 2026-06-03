@@ -1,0 +1,190 @@
+2026-06-03 12:48:19.479 +05:30 [INF] Video KYC Application Started.
+2026-06-03 12:48:24.864 +05:30 [INF] Video KYC Application Stopped.
+2026-06-03 12:48:44.868 +05:30 [INF] Video KYC Application Started.
+2026-06-03 13:01:15.814 +05:30 [INF] Video KYC Application Started.
+2026-06-03 13:08:52.003 +05:30 [INF] Video KYC Application Stopped.
+2026-06-03 13:10:12.658 +05:30 [INF] Video KYC Application Started.
+2026-06-03 13:11:41.075 +05:30 [INF] Video KYC Application Started.
+2026-06-03 13:12:26.788 +05:30 [INF] Video KYC Application Stopped.
+2026-06-03 13:27:52.154 +05:30 [INF] Video KYC Application Started.
+2026-06-03 13:37:43.698 +05:30 [ERR] Unhandled application error occurred.
+System.InvalidOperationException: Two Hubs must not share the same name. 'Hubs.KycHub, App_Code.guiksgpf, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null' and 'VideoKYC.Hubs.KycHub, VideoKYC, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null' both share the name 'KycHub'.
+   at Microsoft.AspNet.SignalR.Hubs.ReflectedHubDescriptorProvider.BuildHubsCache() in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/Lookup/ReflectedHubDescriptorProvider.cs:line 72
+   at System.Lazy`1.CreateValue()
+   at System.Lazy`1.LazyInitValue()
+   at Microsoft.AspNet.SignalR.Hubs.ReflectedHubDescriptorProvider.GetHubs() in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/Lookup/ReflectedHubDescriptorProvider.cs:line 32
+   at System.Linq.Enumerable.<SelectManyIterator>d__17`2.MoveNext()
+   at System.Linq.Enumerable.WhereEnumerableIterator`1.MoveNext()
+   at System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   at System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   at Microsoft.AspNet.SignalR.Hubs.DefaultHubManager.GetHubs(Func`2 predicate) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/Lookup/DefaultHubManager.cs:line 45
+   at Microsoft.AspNet.SignalR.Hubs.DefaultJavaScriptProxyGenerator.GenerateProxy(IHubManager hubManager, IJavaScriptMinifier javaScriptMinifier, Boolean includeDocComments) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/DefaultJavaScriptProxyGenerator.cs:line 65
+   at System.Lazy`1.CreateValue()
+   at System.Lazy`1.LazyInitValue()
+   at Microsoft.AspNet.SignalR.Hubs.DefaultJavaScriptProxyGenerator.GenerateProxy(String serviceUrl) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/DefaultJavaScriptProxyGenerator.cs:line 44
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.ProcessRequest(HostContext context) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/HubDispatcher.cs:line 274
+   at Microsoft.Owin.Mapping.MapMiddleware.<Invoke>d__3.MoveNext() in /_/src/Microsoft.Owin/Mapping/MapMiddleware.cs:line 65
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Microsoft.Owin.Host.SystemWeb.IntegratedPipeline.IntegratedPipelineContextStage.<RunApp>d__7.MoveNext() in /_/src/Microsoft.Owin.Host.SystemWeb/IntegratedPipeline/IntegratedPipelineContextStage.cs:line 85
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Microsoft.Owin.Host.SystemWeb.IntegratedPipeline.IntegratedPipelineContext.<DoFinalWork>d__12.MoveNext() in /_/src/Microsoft.Owin.Host.SystemWeb/IntegratedPipeline/IntegratedPipelineContext.cs:line 153
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Microsoft.Owin.Host.SystemWeb.IntegratedPipeline.StageAsyncResult.End(IAsyncResult ar) in /_/src/Microsoft.Owin.Host.SystemWeb/IntegratedPipeline/StageAsyncResult.cs:line 76
+   at System.Web.HttpApplication.AsyncEventExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStepImpl(IExecutionStep step)
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+2026-06-03 13:37:44.105 +05:30 [ERR] Unhandled application error occurred.
+System.InvalidOperationException: Two Hubs must not share the same name. 'Hubs.KycHub, App_Code.guiksgpf, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null' and 'VideoKYC.Hubs.KycHub, VideoKYC, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null' both share the name 'KycHub'.
+   at Microsoft.AspNet.SignalR.Hubs.ReflectedHubDescriptorProvider.BuildHubsCache() in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/Lookup/ReflectedHubDescriptorProvider.cs:line 72
+   at System.Lazy`1.CreateValue()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Lazy`1.get_Value()
+   at Microsoft.AspNet.SignalR.Hubs.ReflectedHubDescriptorProvider.TryGetHub(String hubName, HubDescriptor& descriptor) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/Lookup/ReflectedHubDescriptorProvider.cs:line 40
+   at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source, Func`2 predicate)
+   at Microsoft.AspNet.SignalR.Hubs.DefaultHubManager.GetHub(String hubName) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/Lookup/DefaultHubManager.cs:line 27
+   at Microsoft.AspNet.SignalR.Hubs.HubManagerExtensions.EnsureHub(IHubManager hubManager, String hubName, IPerformanceCounter[] counters) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/Extensions/HubManagerExtensions.cs:line 33
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.AuthorizeRequest(IRequest request) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/HubDispatcher.cs:line 122
+   at Microsoft.AspNet.SignalR.PersistentConnection.ProcessRequest(IDictionary`2 environment) in /_/src/Microsoft.AspNet.SignalR.Core/PersistentConnection.cs:line 159
+   at Microsoft.Owin.Mapping.MapMiddleware.<Invoke>d__3.MoveNext() in /_/src/Microsoft.Owin/Mapping/MapMiddleware.cs:line 65
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Microsoft.Owin.Host.SystemWeb.IntegratedPipeline.IntegratedPipelineContextStage.<RunApp>d__7.MoveNext() in /_/src/Microsoft.Owin.Host.SystemWeb/IntegratedPipeline/IntegratedPipelineContextStage.cs:line 85
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Microsoft.Owin.Host.SystemWeb.IntegratedPipeline.IntegratedPipelineContext.<DoFinalWork>d__12.MoveNext() in /_/src/Microsoft.Owin.Host.SystemWeb/IntegratedPipeline/IntegratedPipelineContext.cs:line 153
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Microsoft.Owin.Host.SystemWeb.IntegratedPipeline.StageAsyncResult.End(IAsyncResult ar) in /_/src/Microsoft.Owin.Host.SystemWeb/IntegratedPipeline/StageAsyncResult.cs:line 76
+   at System.Web.HttpApplication.AsyncEventExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStepImpl(IExecutionStep step)
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+2026-06-03 14:07:53.450 +05:30 [ERR] Unhandled application error occurred.
+System.InvalidOperationException: Two Hubs must not share the same name. 'Hubs.KycHub, App_Code.guiksgpf, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null' and 'VideoKYC.Hubs.KycHub, VideoKYC, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null' both share the name 'KycHub'.
+   at Microsoft.AspNet.SignalR.Hubs.ReflectedHubDescriptorProvider.BuildHubsCache() in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/Lookup/ReflectedHubDescriptorProvider.cs:line 72
+   at System.Lazy`1.CreateValue()
+   at System.Lazy`1.LazyInitValue()
+   at Microsoft.AspNet.SignalR.Hubs.ReflectedHubDescriptorProvider.GetHubs() in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/Lookup/ReflectedHubDescriptorProvider.cs:line 32
+   at System.Linq.Enumerable.<SelectManyIterator>d__17`2.MoveNext()
+   at System.Linq.Enumerable.WhereEnumerableIterator`1.MoveNext()
+   at System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   at System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   at Microsoft.AspNet.SignalR.Hubs.DefaultHubManager.GetHubs(Func`2 predicate) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/Lookup/DefaultHubManager.cs:line 45
+   at Microsoft.AspNet.SignalR.Hubs.DefaultJavaScriptProxyGenerator.GenerateProxy(IHubManager hubManager, IJavaScriptMinifier javaScriptMinifier, Boolean includeDocComments) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/DefaultJavaScriptProxyGenerator.cs:line 65
+   at System.Lazy`1.CreateValue()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Lazy`1.get_Value()
+   at Microsoft.AspNet.SignalR.Hubs.DefaultJavaScriptProxyGenerator.GenerateProxy(String serviceUrl) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/DefaultJavaScriptProxyGenerator.cs:line 44
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.ProcessRequest(HostContext context) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/HubDispatcher.cs:line 274
+   at Microsoft.Owin.Mapping.MapMiddleware.<Invoke>d__3.MoveNext() in /_/src/Microsoft.Owin/Mapping/MapMiddleware.cs:line 65
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Microsoft.Owin.Host.SystemWeb.IntegratedPipeline.IntegratedPipelineContextStage.<RunApp>d__7.MoveNext() in /_/src/Microsoft.Owin.Host.SystemWeb/IntegratedPipeline/IntegratedPipelineContextStage.cs:line 85
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Microsoft.Owin.Host.SystemWeb.IntegratedPipeline.IntegratedPipelineContext.<DoFinalWork>d__12.MoveNext() in /_/src/Microsoft.Owin.Host.SystemWeb/IntegratedPipeline/IntegratedPipelineContext.cs:line 153
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Microsoft.Owin.Host.SystemWeb.IntegratedPipeline.StageAsyncResult.End(IAsyncResult ar) in /_/src/Microsoft.Owin.Host.SystemWeb/IntegratedPipeline/StageAsyncResult.cs:line 76
+   at System.Web.HttpApplication.AsyncEventExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStepImpl(IExecutionStep step)
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+2026-06-03 14:07:53.476 +05:30 [ERR] Unhandled application error occurred.
+System.InvalidOperationException: Two Hubs must not share the same name. 'Hubs.KycHub, App_Code.guiksgpf, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null' and 'VideoKYC.Hubs.KycHub, VideoKYC, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null' both share the name 'KycHub'.
+   at Microsoft.AspNet.SignalR.Hubs.ReflectedHubDescriptorProvider.BuildHubsCache() in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/Lookup/ReflectedHubDescriptorProvider.cs:line 72
+   at System.Lazy`1.CreateValue()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Lazy`1.get_Value()
+   at Microsoft.AspNet.SignalR.Hubs.ReflectedHubDescriptorProvider.TryGetHub(String hubName, HubDescriptor& descriptor) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/Lookup/ReflectedHubDescriptorProvider.cs:line 40
+   at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source, Func`2 predicate)
+   at Microsoft.AspNet.SignalR.Hubs.DefaultHubManager.GetHub(String hubName) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/Lookup/DefaultHubManager.cs:line 27
+   at Microsoft.AspNet.SignalR.Hubs.HubManagerExtensions.EnsureHub(IHubManager hubManager, String hubName, IPerformanceCounter[] counters) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/Extensions/HubManagerExtensions.cs:line 33
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.AuthorizeRequest(IRequest request) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/HubDispatcher.cs:line 122
+   at Microsoft.AspNet.SignalR.PersistentConnection.ProcessRequest(IDictionary`2 environment) in /_/src/Microsoft.AspNet.SignalR.Core/PersistentConnection.cs:line 159
+   at Microsoft.Owin.Mapping.MapMiddleware.<Invoke>d__3.MoveNext() in /_/src/Microsoft.Owin/Mapping/MapMiddleware.cs:line 65
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Microsoft.Owin.Host.SystemWeb.IntegratedPipeline.IntegratedPipelineContextStage.<RunApp>d__7.MoveNext() in /_/src/Microsoft.Owin.Host.SystemWeb/IntegratedPipeline/IntegratedPipelineContextStage.cs:line 85
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Microsoft.Owin.Host.SystemWeb.IntegratedPipeline.IntegratedPipelineContext.<DoFinalWork>d__12.MoveNext() in /_/src/Microsoft.Owin.Host.SystemWeb/IntegratedPipeline/IntegratedPipelineContext.cs:line 153
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Microsoft.Owin.Host.SystemWeb.IntegratedPipeline.StageAsyncResult.End(IAsyncResult ar) in /_/src/Microsoft.Owin.Host.SystemWeb/IntegratedPipeline/StageAsyncResult.cs:line 76
+   at System.Web.HttpApplication.AsyncEventExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStepImpl(IExecutionStep step)
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+2026-06-03 14:07:56.437 +05:30 [ERR] Unhandled application error occurred.
+System.InvalidOperationException: Two Hubs must not share the same name. 'Hubs.KycHub, App_Code.guiksgpf, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null' and 'VideoKYC.Hubs.KycHub, VideoKYC, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null' both share the name 'KycHub'.
+   at Microsoft.AspNet.SignalR.Hubs.ReflectedHubDescriptorProvider.BuildHubsCache() in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/Lookup/ReflectedHubDescriptorProvider.cs:line 72
+   at System.Lazy`1.CreateValue()
+   at System.Lazy`1.LazyInitValue()
+   at Microsoft.AspNet.SignalR.Hubs.ReflectedHubDescriptorProvider.GetHubs() in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/Lookup/ReflectedHubDescriptorProvider.cs:line 32
+   at System.Linq.Enumerable.<SelectManyIterator>d__17`2.MoveNext()
+   at System.Linq.Enumerable.WhereEnumerableIterator`1.MoveNext()
+   at System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   at System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   at Microsoft.AspNet.SignalR.Hubs.DefaultHubManager.GetHubs(Func`2 predicate) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/Lookup/DefaultHubManager.cs:line 45
+   at Microsoft.AspNet.SignalR.Hubs.DefaultJavaScriptProxyGenerator.GenerateProxy(IHubManager hubManager, IJavaScriptMinifier javaScriptMinifier, Boolean includeDocComments) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/DefaultJavaScriptProxyGenerator.cs:line 65
+   at System.Lazy`1.CreateValue()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Lazy`1.get_Value()
+   at Microsoft.AspNet.SignalR.Hubs.DefaultJavaScriptProxyGenerator.GenerateProxy(String serviceUrl) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/DefaultJavaScriptProxyGenerator.cs:line 44
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.ProcessRequest(HostContext context) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/HubDispatcher.cs:line 274
+   at Microsoft.Owin.Mapping.MapMiddleware.<Invoke>d__3.MoveNext() in /_/src/Microsoft.Owin/Mapping/MapMiddleware.cs:line 65
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Microsoft.Owin.Host.SystemWeb.IntegratedPipeline.IntegratedPipelineContextStage.<RunApp>d__7.MoveNext() in /_/src/Microsoft.Owin.Host.SystemWeb/IntegratedPipeline/IntegratedPipelineContextStage.cs:line 85
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Microsoft.Owin.Host.SystemWeb.IntegratedPipeline.IntegratedPipelineContext.<DoFinalWork>d__12.MoveNext() in /_/src/Microsoft.Owin.Host.SystemWeb/IntegratedPipeline/IntegratedPipelineContext.cs:line 153
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Microsoft.Owin.Host.SystemWeb.IntegratedPipeline.StageAsyncResult.End(IAsyncResult ar) in /_/src/Microsoft.Owin.Host.SystemWeb/IntegratedPipeline/StageAsyncResult.cs:line 76
+   at System.Web.HttpApplication.AsyncEventExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStepImpl(IExecutionStep step)
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+2026-06-03 14:07:58.384 +05:30 [ERR] Unhandled application error occurred.
+System.InvalidOperationException: Two Hubs must not share the same name. 'Hubs.KycHub, App_Code.guiksgpf, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null' and 'VideoKYC.Hubs.KycHub, VideoKYC, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null' both share the name 'KycHub'.
+   at Microsoft.AspNet.SignalR.Hubs.ReflectedHubDescriptorProvider.BuildHubsCache() in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/Lookup/ReflectedHubDescriptorProvider.cs:line 72
+   at System.Lazy`1.CreateValue()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Lazy`1.get_Value()
+   at Microsoft.AspNet.SignalR.Hubs.ReflectedHubDescriptorProvider.TryGetHub(String hubName, HubDescriptor& descriptor) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/Lookup/ReflectedHubDescriptorProvider.cs:line 40
+   at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source, Func`2 predicate)
+   at Microsoft.AspNet.SignalR.Hubs.DefaultHubManager.GetHub(String hubName) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/Lookup/DefaultHubManager.cs:line 27
+   at Microsoft.AspNet.SignalR.Hubs.HubManagerExtensions.EnsureHub(IHubManager hubManager, String hubName, IPerformanceCounter[] counters) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/Extensions/HubManagerExtensions.cs:line 33
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.AuthorizeRequest(IRequest request) in /_/src/Microsoft.AspNet.SignalR.Core/Hubs/HubDispatcher.cs:line 122
+   at Microsoft.AspNet.SignalR.PersistentConnection.ProcessRequest(IDictionary`2 environment) in /_/src/Microsoft.AspNet.SignalR.Core/PersistentConnection.cs:line 159
+   at Microsoft.Owin.Mapping.MapMiddleware.<Invoke>d__3.MoveNext() in /_/src/Microsoft.Owin/Mapping/MapMiddleware.cs:line 65
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Microsoft.Owin.Host.SystemWeb.IntegratedPipeline.IntegratedPipelineContextStage.<RunApp>d__7.MoveNext() in /_/src/Microsoft.Owin.Host.SystemWeb/IntegratedPipeline/IntegratedPipelineContextStage.cs:line 85
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Microsoft.Owin.Host.SystemWeb.IntegratedPipeline.IntegratedPipelineContext.<DoFinalWork>d__12.MoveNext() in /_/src/Microsoft.Owin.Host.SystemWeb/IntegratedPipeline/IntegratedPipelineContext.cs:line 153
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Microsoft.Owin.Host.SystemWeb.IntegratedPipeline.StageAsyncResult.End(IAsyncResult ar) in /_/src/Microsoft.Owin.Host.SystemWeb/IntegratedPipeline/StageAsyncResult.cs:line 76
+   at System.Web.HttpApplication.AsyncEventExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStepImpl(IExecutionStep step)
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)

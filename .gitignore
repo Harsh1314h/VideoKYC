@@ -1,0 +1,27 @@
+# .gitignore for ASP.NET Web Forms Video KYC Project
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build output directories
+bin/
+obj/
+
+# NuGet Packages
+packages/
+
+# User Uploaded Data (dynamic during runtime)
+Uploads/
+App_Data/Temp/
+
+# Downloaded AI/ML Assets (downloaded via download_assets.ps1)
+App_Data/tessdata/
+models/
+
+# Database files if created locally in App_Data (e.g. LocalDB mdf/ldf files)
+*.mdf
+*.ldf
