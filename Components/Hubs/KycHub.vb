@@ -36,6 +36,14 @@ Namespace Hubs
                 ' Notify any queue monitoring pages that this session is taken
                 Await Clients.Group("agent-queue").sessionTaken(sessionId)
             End If
+
+            If role = "customer" Then
+                ' Notify the customer that the agent is already present so they can start the WebRTC offer
+                Dim agentConn = Sessions(sessionId).AgentConnectionId
+                If Not String.IsNullOrEmpty(agentConn) Then
+                    Await Clients.Client(Context.ConnectionId).agentJoined()
+                End If
+            End If
         End Function
 
         ' ── WebRTC Signaling ────────────────────────────────────────────────
