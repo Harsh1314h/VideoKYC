@@ -172,7 +172,7 @@
     <script src="/signalr/hubs"></script>
 
     <!-- ML dependencies -->
-    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.3.0/dist/face-api.js"></script>
+    <script src="../Scripts/vendor/face-api.js"></script>
 
     <!-- Client-side Custom WebRTC Logic -->
     <script src="../Scripts/face-verification.js"></script>
