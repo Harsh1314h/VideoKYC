@@ -20,7 +20,7 @@ App_Data/Temp/
 
 # Downloaded AI/ML Assets (downloaded via download_assets.ps1)
 App_Data/tessdata/
-models/
+/models/
 
 # Database files if created locally in App_Data (e.g. LocalDB mdf/ldf files)
 *.mdf
