@@ -16,7 +16,11 @@ kycProxy.on('receiveOffer', async function (offer) {
     });
 
     // Add local tracks
-    localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+    if (localStream) {
+        localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+    } else {
+        console.warn("localStream is not initialized; cannot add tracks.");
+    }
 
     // Handle remote tracks
     pc.ontrack = function (e) {
@@ -64,11 +68,11 @@ kycProxy.on('participantDisconnected', function () {
 
 // Initialize connection
 connection.start()
-    .done(function () {
+    .done(async function () {
         console.log("SignalR Connection established. Session: " + sessionId);
         $('#lblTitleSessionId').text(sessionId);
+        await startLocalCamera();
         kycProxy.invoke('joinSession', sessionId, 'agent');
-        startLocalCamera();
     })
     .fail(function (e) {
         console.error("SignalR Connection failed: ", e);
@@ -103,9 +107,15 @@ function triggerFace() {
 }
 
 function triggerVoice() {
-    console.log("Triggering voice challenge-phrase verification...");
+    var phrases = [
+        "Please verify my identity for video KYC session",
+        "I am the authorized holder of this account",
+        "Verifying my biometric details for secure access"
+    ];
+    var randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+    console.log("Triggering voice challenge-phrase verification: " + randomPhrase);
     $('#voiceStatus').text('Prompted...').removeClass('bg-success bg-danger').addClass('bg-warning text-dark');
-    kycProxy.invoke('triggerVoiceVerification', sessionId);
+    kycProxy.invoke('triggerVoiceVerification', sessionId, randomPhrase);
 }
 
 // Decision functions

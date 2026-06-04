@@ -62,11 +62,11 @@ kycProxy.on('participantDisconnected', function () {
 
 // Initialize connection
 connection.start()
-    .done(function () {
+    .done(async function () {
         console.log("SignalR Connection established. Session ID: " + sessionId);
         $('#lblDisplaySessionId').text(sessionId);
+        await startLocalCamera();
         kycProxy.invoke('joinSession', sessionId, 'customer');
-        startLocalCamera();
     })
     .fail(function (e) {
         console.error("SignalR Connection failed: ", e);
@@ -93,7 +93,11 @@ async function createOffer() {
     });
 
     // Add local tracks to WebRTC connection
-    localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+    if (localStream) {
+        localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+    } else {
+        console.warn("localStream is not initialized; cannot add tracks.");
+    }
 
     // Handle remote video stream
     pc.ontrack = function (event) {
