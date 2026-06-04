@@ -213,6 +213,8 @@
     <Content Include="Scripts\face-verification.js" />
     <Content Include="Scripts\voice-verification.js" />
     <Content Include="Scripts\document-upload.js" />
+    <Content Include="Scripts\vendor\jquery.signalR-2.4.3.min.js" />
+    <Content Include="Scripts\vendor\face-api.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
