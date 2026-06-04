@@ -188,3 +188,4 @@ System.InvalidOperationException: Two Hubs must not share the same name. 'Hubs.K
    at System.Web.HttpApplication.AsyncEventExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
    at System.Web.HttpApplication.ExecuteStepImpl(IExecutionStep step)
    at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+2026-06-03 16:03:25.193 +05:30 [INF] Video KYC Application Started.

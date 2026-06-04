@@ -146,16 +146,16 @@
     <Import Include="System.Web.UI.HtmlControls" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Code\Data\DatabaseHelper.vb" />
-    <Compile Include="App_Code\Hubs\KycHub.vb" />
-    <Compile Include="App_Code\Models\Customer.vb" />
-    <Compile Include="App_Code\Models\Agent.vb" />
-    <Compile Include="App_Code\Models\KycSession.vb" />
-    <Compile Include="App_Code\Models\DocumentResult.vb" />
-    <Compile Include="App_Code\Services\SessionService.vb" />
-    <Compile Include="App_Code\Services\FaceVerificationService.vb" />
-    <Compile Include="App_Code\Services\VoiceVerificationService.vb" />
-    <Compile Include="App_Code\Services\DocumentVerificationService.vb" />
+    <Compile Include="Components\Data\DatabaseHelper.vb" />
+    <Compile Include="Components\Hubs\KycHub.vb" />
+    <Compile Include="Components\Models\Customer.vb" />
+    <Compile Include="Components\Models\Agent.vb" />
+    <Compile Include="Components\Models\KycSession.vb" />
+    <Compile Include="Components\Models\DocumentResult.vb" />
+    <Compile Include="Components\Services\SessionService.vb" />
+    <Compile Include="Components\Services\FaceVerificationService.vb" />
+    <Compile Include="Components\Services\VoiceVerificationService.vb" />
+    <Compile Include="Components\Services\DocumentVerificationService.vb" />
     <Compile Include="Startup.vb" />
     <Compile Include="Global.asax.vb">
       <DependentUpon>Global.asax</DependentUpon>
