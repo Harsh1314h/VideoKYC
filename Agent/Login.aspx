@@ -34,12 +34,18 @@
 
                     <div class="mb-4">
                         <label for="txtUsername" class="form-label text-secondary-light fw-medium">Officer Username</label>
-                        <asp:TextBox ID="txtUsername" runat="server" CssClass="form-control bg-dark border-secondary-light text-white py-3 rounded-3" placeholder="Enter username (e.g. agent1)" required="required"></asp:TextBox>
+                        <asp:TextBox ID="txtUsername" runat="server" CssClass="form-control bg-dark border-secondary-light text-white py-3 rounded-3" placeholder="Enter username (e.g. officer1)" required="required"></asp:TextBox>
                     </div>
 
                     <div class="mb-5">
                         <label for="txtPassword" class="form-label text-secondary-light fw-medium">Password</label>
-                        <asp:TextBox ID="txtPassword" runat="server" CssClass="form-control bg-dark border-secondary-light text-white py-3 rounded-3" TextMode="Password" placeholder="Enter password (e.g. password123)" required="required"></asp:TextBox>
+                        <asp:TextBox ID="txtPassword" runat="server" ClientIDMode="Static" CssClass="form-control bg-dark border-secondary-light text-white py-3 rounded-3" TextMode="Password" placeholder="Enter password (e.g. password123)" required="required"></asp:TextBox>
+                        <div class="form-check mt-3">
+                            <input class="form-check-input bg-dark border-secondary-light" type="checkbox" id="chkShowPassword">
+                            <label class="form-check-label text-secondary-light fs-7" for="chkShowPassword">
+                                Show Password
+                            </label>
+                        </div>
                     </div>
 
                     <asp:Button ID="btnLogin" runat="server" OnClick="btnLogin_Click" CssClass="btn btn-primary-gradient w-100 py-3 fw-bold rounded-3 fs-5" Text="Log In" />
@@ -47,5 +53,20 @@
             </div>
         </div>
     </form>
+
+    <!-- jQuery & Toggle Script -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#chkShowPassword').change(function () {
+                var passwordInput = $('#txtPassword');
+                if ($(this).is(':checked')) {
+                    passwordInput.attr('type', 'text');
+                } else {
+                    passwordInput.attr('type', 'password');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

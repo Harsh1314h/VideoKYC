@@ -101,8 +101,8 @@ CREATE TABLE KycAuditLog (
 );
 GO
 
--- Seed Default Agent: username = agent1, password = password123
+-- Seed Default Agent: username = officer1, password = password123
 -- SHA256 of "password123" is ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f
 INSERT INTO Agents (Username, PasswordHash, FullName, IsActive)
-VALUES ('agent1', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'Officer Alice', 1);
+VALUES ('officer1', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'officer1', 1);
 GO

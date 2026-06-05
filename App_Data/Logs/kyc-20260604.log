@@ -1290,3 +1290,4 @@ System.InvalidOperationException: Two Hubs must not share the same name. 'VideoK
 2026-06-04 14:46:58.221 +05:30 [INF] Video KYC Application Started.
 2026-06-04 14:50:15.436 +05:30 [INF] Video KYC Application Started.
 2026-06-04 18:42:08.343 +05:30 [INF] Video KYC Application Started.
+2026-06-04 18:50:40.553 +05:30 [INF] Video KYC Application Started.
