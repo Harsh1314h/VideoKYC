@@ -188,6 +188,6 @@
     <script src="/signalr/hubs"></script>
 
     <!-- Client-side Custom WebRTC Logic -->
-    <script src="../Scripts/webrtc-agent.js"></script>
+    <script src="../Scripts/webrtc-agent.js?v=<%=DateTime.Now.Ticks%>"></script>
 </body>
 </html>

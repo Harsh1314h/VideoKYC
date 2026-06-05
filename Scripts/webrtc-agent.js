@@ -205,36 +205,38 @@ const CAM_OFF_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="
 var isMuted = false;
 var isCamOff = false;
 
-$('#btnMute').click(function () {
-    if (localStream) {
-        var audioTracks = localStream.getAudioTracks();
-        if (audioTracks.length > 0) {
-            isMuted = !isMuted;
-            audioTracks[0].enabled = !isMuted;
-            
-            if (isMuted) {
-                $(this).removeClass('btn-outline-light').addClass('btn-danger').attr('title', 'Unmute Microphone').html(MIC_OFF_SVG);
-            } else {
-                $(this).removeClass('btn-danger').addClass('btn-outline-light').attr('title', 'Mute Microphone').html(MIC_ON_SVG);
+$(document).ready(function () {
+    $('#btnMute').click(function () {
+        if (localStream) {
+            var audioTracks = localStream.getAudioTracks();
+            if (audioTracks.length > 0) {
+                isMuted = !isMuted;
+                audioTracks[0].enabled = !isMuted;
+                
+                if (isMuted) {
+                    $(this).removeClass('btn-outline-light').addClass('btn-danger').attr('title', 'Unmute Microphone').html(MIC_OFF_SVG);
+                } else {
+                    $(this).removeClass('btn-danger').addClass('btn-outline-light').attr('title', 'Mute Microphone').html(MIC_ON_SVG);
+                }
+                console.log("Microphone " + (isMuted ? "muted" : "unmuted"));
             }
-            console.log("Microphone " + (isMuted ? "muted" : "unmuted"));
         }
-    }
-});
+    });
 
-$('#btnCamOff').click(function () {
-    if (localStream) {
-        var videoTracks = localStream.getVideoTracks();
-        if (videoTracks.length > 0) {
-            isCamOff = !isCamOff;
-            videoTracks[0].enabled = !isCamOff;
-            
-            if (isCamOff) {
-                $(this).removeClass('btn-outline-light').addClass('btn-danger').attr('title', 'Turn Camera On').html(CAM_OFF_SVG);
-            } else {
-                $(this).removeClass('btn-danger').addClass('btn-outline-light').attr('title', 'Turn Camera Off').html(CAM_ON_SVG);
+    $('#btnCamOff').click(function () {
+        if (localStream) {
+            var videoTracks = localStream.getVideoTracks();
+            if (videoTracks.length > 0) {
+                isCamOff = !isCamOff;
+                videoTracks[0].enabled = !isCamOff;
+                
+                if (isCamOff) {
+                    $(this).removeClass('btn-outline-light').addClass('btn-danger').attr('title', 'Turn Camera On').html(CAM_OFF_SVG);
+                } else {
+                    $(this).removeClass('btn-danger').addClass('btn-outline-light').attr('title', 'Turn Camera Off').html(CAM_ON_SVG);
+                }
+                console.log("Camera " + (isCamOff ? "disabled" : "enabled"));
             }
-            console.log("Camera " + (isCamOff ? "disabled" : "enabled"));
         }
-    }
+    });
 });

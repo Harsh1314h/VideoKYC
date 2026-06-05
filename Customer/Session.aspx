@@ -175,9 +175,9 @@
     <script src="../Scripts/vendor/face-api.js"></script>
 
     <!-- Client-side Custom WebRTC Logic -->
-    <script src="../Scripts/face-verification.js"></script>
-    <script src="../Scripts/voice-verification.js"></script>
-    <script src="../Scripts/document-upload.js"></script>
-    <script src="../Scripts/webrtc-customer.js"></script>
+    <script src="../Scripts/face-verification.js?v=<%=DateTime.Now.Ticks%>"></script>
+    <script src="../Scripts/voice-verification.js?v=<%=DateTime.Now.Ticks%>"></script>
+    <script src="../Scripts/document-upload.js?v=<%=DateTime.Now.Ticks%>"></script>
+    <script src="../Scripts/webrtc-customer.js?v=<%=DateTime.Now.Ticks%>"></script>
 </body>
 </html>
