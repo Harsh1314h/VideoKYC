@@ -34,9 +34,14 @@ Partial Public Class Register
             End If
 
             ' Validate phone length is exactly 10 digits and only numbers
-            If phone.Length <> 10 OrElse Not phone.All(AddressOf Char.IsDigit) Then
-                Throw New Exception("Mobile number must be exactly 10 digits and contain only numbers.")
+            If phone.Length <> 10 Then
+                Throw New Exception("Mobile number must be exactly 10 digits.")
             End If
+            For Each c As Char In phone
+                If Not Char.IsDigit(c) Then
+                    Throw New Exception("Mobile number must contain only numbers.")
+                End If
+            Next
 
             ' Insert to database and create session
             Dim sessionSvc As New SessionService()

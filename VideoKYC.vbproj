@@ -79,6 +79,9 @@
     <Reference Include="zxing">
       <HintPath>packages\ZXing.Net.0.16.9\lib\net48\zxing.dll</HintPath>
     </Reference>
+    <Reference Include="Spire.Pdf">
+      <HintPath>packages\FreeSpire.PDF.8.2.0\lib\net40\Spire.Pdf.dll</HintPath>
+    </Reference>
     <Reference Include="Accord">
       <HintPath>packages\Accord.3.8.0\lib\net462\Accord.dll</HintPath>
     </Reference>

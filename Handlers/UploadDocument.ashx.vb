@@ -31,16 +31,44 @@ Namespace Handlers
                 End If
 
                 ' Save the image file as raw doc
-                Dim fileExt = Path.GetExtension(file.FileName)
+                Dim fileExt = Path.GetExtension(file.FileName).ToLower()
                 If String.IsNullOrEmpty(fileExt) Then fileExt = ".jpg"
                 
                 Dim originalName = "doc_" & docType.ToLower() & fileExt
                 Dim originalPath = Path.Combine(uploadsDir, originalName)
                 file.SaveAs(originalPath)
 
+                Dim processingPath = originalPath
+                Dim dbImagePath = "~/Uploads/" & sessionId & "/" & originalName
+
+                ' If PDF, convert first page to JPEG using Spire.Pdf
+                If fileExt = ".pdf" Then
+                    Try
+                        Dim jpegName = "doc_" & docType.ToLower() & ".jpg"
+                        Dim jpegPath = Path.Combine(uploadsDir, jpegName)
+                        
+                        Using pdfDoc As New Spire.Pdf.PdfDocument()
+                            pdfDoc.LoadFromFile(originalPath)
+                            If pdfDoc.Pages.Count > 0 Then
+                                Using bmp = pdfDoc.SaveAsImage(0)
+                                    bmp.Save(jpegPath, System.Drawing.Imaging.ImageFormat.Jpeg)
+                                End Using
+                            Else
+                                Throw New Exception("The uploaded PDF contains no pages.")
+                            End If
+                        End Using
+                        
+                        processingPath = jpegPath
+                        dbImagePath = "~/Uploads/" & sessionId & "/" & jpegName
+                    Catch ex As Exception
+                        Throw New Exception("Failed to process PDF document: " & ex.Message, ex)
+                    End Try
+                End If
+
                 ' Run processing pipeline
                 Dim docSvc As New DocumentVerificationService()
-                Dim result = docSvc.ProcessDocument(originalPath, docType)
+                Dim result = docSvc.ProcessDocument(processingPath, docType)
+                result.ImagePath = dbImagePath
 
                 ' Save the document photo image if OCR verified
                 If result.IsVerified AndAlso File.Exists(originalPath) Then

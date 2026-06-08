@@ -38,12 +38,20 @@ $(document).ready(function () {
             $('#docUploadProgress').addClass('d-none');
 
             // Render Preview Image in client side for face-api
-            var reader = new FileReader();
-            reader.onload = function (event) {
-                $('#docPhotoPreview').attr('src', event.target.result);
+            if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
+                // For PDF, use the server-generated JPEG path
+                var imageSrc = data.ImagePath.replace('~', '');
+                $('#docPhotoPreview').attr('src', imageSrc);
                 $('#pnlDocPreview').removeClass('d-none');
-            };
-            reader.readAsDataURL(file);
+            } else {
+                // For normal images, display local file reader preview immediately
+                var reader = new FileReader();
+                reader.onload = function (event) {
+                    $('#docPhotoPreview').attr('src', event.target.result);
+                    $('#pnlDocPreview').removeClass('d-none');
+                };
+                reader.readAsDataURL(file);
+            }
 
             // Send OCR extraction results back to officer
             kycProxy.invoke('sendVerificationResult', sessionId, 'document', JSON.stringify(data));

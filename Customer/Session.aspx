@@ -95,11 +95,11 @@
                                     <strong>Document Verification Request:</strong> Please upload or capture your original <strong id="lblRequestedDocType">PAN</strong> card.
                                 </div>
                                 <div class="upload-container border border-dashed border-secondary-light border-opacity-25 rounded-3 p-4 text-center">
-                                    <input type="file" id="docUploadInput" class="d-none" accept="image/*" />
+                                    <input type="file" id="docUploadInput" class="d-none" accept="image/*,application/pdf" />
                                     <label for="docUploadInput" class="btn btn-outline-accent py-2 px-4 rounded-3 fs-7 fw-semibold cursor-pointer mb-2">
-                                        Select Image File
+                                        Select Document File
                                     </label>
-                                    <p class="text-secondary-light mb-0 fs-8">PNG, JPG, or JPEG file. Ensure card details are visible.</p>
+                                    <p class="text-secondary-light mb-0 fs-8">PNG, JPG, JPEG, or PDF file. Ensure details are visible.</p>
                                 </div>
                                 <div id="docUploadProgress" class="d-none mt-3">
                                     <div class="progress bg-dark" style="height: 6px;">
