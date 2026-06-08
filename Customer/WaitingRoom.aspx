@@ -36,6 +36,12 @@
                     </div>
 
                     <asp:HiddenField ID="hdnSessionId" runat="server" ClientIDMode="Static" />
+
+                    <div class="mt-4 pt-3 border-top border-secondary-light border-opacity-10">
+                        <a href="Register.aspx?action=logout" onclick="return confirm('Are you sure you want to leave the queue?');" class="text-decoration-none text-danger fs-7 hover-glow">
+                            Cancel & Leave Queue
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

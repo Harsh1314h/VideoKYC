@@ -11,6 +11,13 @@ Partial Public Class Register
     Protected lblError As Global.System.Web.UI.WebControls.Label
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        ' Handle explicit end-call / logout action
+        If Request.QueryString("action") = "logout" Then
+            Session("SessionId") = Nothing
+            Session("CustomerName") = Nothing
+            Session("CustomerId") = Nothing
+        End If
+
         ' If already registered, redirect to waiting room
         If Session("SessionId") IsNot Nothing Then
             Response.Redirect("WaitingRoom.aspx")

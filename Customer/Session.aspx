@@ -21,7 +21,7 @@
                 <span class="d-flex align-items-center">
                     <span class="pulse-circle me-2"></span>
                     <span class="text-secondary-light me-3">Live Call Session</span>
-                    <a href="Register.aspx" class="btn btn-outline-danger btn-sm rounded-pill px-3">End Call</a>
+                    <a href="Register.aspx?action=logout" onclick="return confirm('Are you sure you want to end this call?');" class="btn btn-outline-danger btn-sm rounded-pill px-3">End Call</a>
                 </span>
             </div>
         </nav>
