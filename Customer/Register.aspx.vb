@@ -33,6 +33,11 @@ Partial Public Class Register
                 Throw New Exception("Please enter your name and phone number.")
             End If
 
+            ' Validate phone length is exactly 10 digits and only numbers
+            If phone.Length <> 10 OrElse Not phone.All(AddressOf Char.IsDigit) Then
+                Throw New Exception("Mobile number must be exactly 10 digits and contain only numbers.")
+            End If
+
             ' Insert to database and create session
             Dim sessionSvc As New SessionService()
             Dim customer = sessionSvc.RegisterCustomer(name, phone)

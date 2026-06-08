@@ -52,7 +52,7 @@
 
                             <div class="mb-4">
                                 <label for="txtPhone" class="form-label text-secondary-light fw-medium">Mobile Number</label>
-                                <asp:TextBox ID="txtPhone" runat="server" CssClass="form-control bg-dark border-secondary-light text-white py-3 rounded-3" placeholder="Enter 10-digit mobile number" MaxLength="15"></asp:TextBox>
+                                <asp:TextBox ID="txtPhone" runat="server" ClientIDMode="Static" CssClass="form-control bg-dark border-secondary-light text-white py-3 rounded-3" placeholder="Enter 10-digit mobile number" MaxLength="10" onkeypress="return isNumberKey(event)"></asp:TextBox>
                             </div>
 
                             <asp:Button ID="btnSubmit" runat="server" OnClick="btnSubmit_Click" CssClass="btn btn-primary-gradient w-100 py-3 fw-bold rounded-3 fs-5" Text="Start Verification" />
@@ -78,6 +78,14 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            return true;
+        }
+
         $(document).ready(function () {
             var activeTab = $('#hdnActiveTab').val();
             if (activeTab === 'rejoin') {
