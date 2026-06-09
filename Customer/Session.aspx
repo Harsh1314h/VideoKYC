@@ -92,23 +92,41 @@
                             <!-- Document Upload Instruction Panel -->
                             <div id="pnlDocumentUpload" class="instruction-block d-none">
                                 <div class="alert alert-info border-0 bg-primary bg-opacity-10 text-primary p-3 rounded-3 mb-4 fs-7">
-                                    <strong>Document Verification Request:</strong> Please upload or capture your original <strong id="lblRequestedDocType">PAN</strong> card.
+                                    <strong>Document Verification Request:</strong> Please upload front and back images of your <strong id="lblRequestedDocType">PAN</strong> card.
                                 </div>
-                                <div class="upload-container border border-dashed border-secondary-light border-opacity-25 rounded-3 p-4 text-center">
-                                    <input type="file" id="docUploadInput" class="d-none" accept="image/*,application/pdf" />
-                                    <label for="docUploadInput" class="btn btn-outline-accent py-2 px-4 rounded-3 fs-7 fw-semibold cursor-pointer mb-2">
-                                        Select Document File
-                                    </label>
-                                    <p class="text-secondary-light mb-0 fs-8">PNG, JPG, JPEG, or PDF file. Ensure details are visible.</p>
+                                <div class="row g-3">
+                                    <!-- Front Side Upload -->
+                                    <div class="col-sm-6">
+                                        <div class="upload-container border border-dashed border-secondary-light border-opacity-25 rounded-3 p-3 text-center">
+                                            <span class="fs-8 text-secondary-light d-block mb-2 fw-semibold">Front Side</span>
+                                            <input type="file" id="docUploadFront" class="d-none" accept="image/*" />
+                                            <label for="docUploadFront" class="btn btn-outline-accent btn-sm py-2 px-3 rounded-3 fs-8 fw-semibold cursor-pointer mb-2">
+                                                Select Front Image
+                                            </label>
+                                            <div class="mt-2 d-none" id="pnlFrontPreview">
+                                                <img id="imgFrontPreview" src="#" class="img-thumbnail bg-dark border-secondary-light" style="max-height: 100px; max-width: 100%; object-fit: contain;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Back Side Upload -->
+                                    <div class="col-sm-6">
+                                        <div class="upload-container border border-dashed border-secondary-light border-opacity-25 rounded-3 p-3 text-center">
+                                            <span class="fs-8 text-secondary-light d-block mb-2 fw-semibold">Back Side</span>
+                                            <input type="file" id="docUploadBack" class="d-none" accept="image/*" />
+                                            <label for="docUploadBack" class="btn btn-outline-accent btn-sm py-2 px-3 rounded-3 fs-8 fw-semibold cursor-pointer mb-2">
+                                                Select Back Image
+                                            </label>
+                                            <div class="mt-2 d-none" id="pnlBackPreview">
+                                                <img id="imgBackPreview" src="#" class="img-thumbnail bg-dark border-secondary-light" style="max-height: 100px; max-width: 100%; object-fit: contain;" />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div id="docUploadProgress" class="d-none mt-3">
                                     <div class="progress bg-dark" style="height: 6px;">
                                         <div class="progress-bar bg-primary-gradient progress-bar-striped progress-bar-animated" style="width: 100%;"></div>
                                     </div>
-                                    <p class="text-secondary-light fs-8 mt-1 text-center">Uploading and analyzing document text...</p>
-                                </div>
-                                <div class="mt-3 text-center d-none" id="pnlDocPreview">
-                                    <img id="docPhotoPreview" src="#" alt="Doc Preview" class="img-thumbnail bg-dark border-secondary-light" style="max-height: 120px;" />
+                                    <p class="text-secondary-light fs-8 mt-1 text-center" id="lblUploadProgressText">Uploading and analyzing document text...</p>
                                 </div>
                             </div>
 

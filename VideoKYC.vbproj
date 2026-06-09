@@ -155,6 +155,7 @@
     <Compile Include="Components\Models\Agent.vb" />
     <Compile Include="Components\Models\KycSession.vb" />
     <Compile Include="Components\Models\DocumentResult.vb" />
+    <Compile Include="Components\Models\DocumentVerification.vb" />
     <Compile Include="Components\Services\SessionService.vb" />
     <Compile Include="Components\Services\FaceVerificationService.vb" />
     <Compile Include="Components\Services\VoiceVerificationService.vb" />

@@ -15,8 +15,17 @@ Namespace Services
                     Using liveResized As New Mat()
                     Using docResized As New Mat()
                         ' Resize to standard resolution for uniform comparison
-                        Cv2.Resize(liveImg, liveResized, New Size(200, 200))
-                        Cv2.Resize(docImg, docResized, New Size(200, 200))
+                        Using iaLive As InputArray = InputArray.Create(liveImg)
+                            Using oaLiveResized As OutputArray = OutputArray.Create(liveResized)
+                                Cv2.Resize(iaLive, oaLiveResized, New Size(200, 200))
+                            End Using
+                        End Using
+
+                        Using iaDoc As InputArray = InputArray.Create(docImg)
+                            Using oaDocResized As OutputArray = OutputArray.Create(docResized)
+                                Cv2.Resize(iaDoc, oaDocResized, New Size(200, 200))
+                            End Using
+                        End Using
 
                         Using liveHist As New Mat()
                         Using docHist As New Mat()
@@ -25,15 +34,34 @@ Namespace Services
                             Dim ranges As Rangef() = {New Rangef(0, 256)}
 
                             ' Calculate histograms
-                            Cv2.CalcHist(New Mat() {liveResized}, channels, Nothing, liveHist, 1, histSize, ranges)
-                            Cv2.CalcHist(New Mat() {docResized}, channels, Nothing, docHist, 1, histSize, ranges)
+                            Using oaLiveHist As OutputArray = OutputArray.Create(liveHist)
+                                Cv2.CalcHist(New Mat() {liveResized}, channels, Nothing, oaLiveHist, 1, histSize, ranges)
+                            End Using
+
+                            Using oaDocHist As OutputArray = OutputArray.Create(docHist)
+                                Cv2.CalcHist(New Mat() {docResized}, channels, Nothing, oaDocHist, 1, histSize, ranges)
+                            End Using
 
                             ' Normalize histograms
-                            Cv2.Normalize(liveHist, liveHist, 0, 1, NormTypes.MinMax)
-                            Cv2.Normalize(docHist, docHist, 0, 1, NormTypes.MinMax)
+                            Using iaLiveHist As InputArray = InputArray.Create(liveHist)
+                                Using oaLiveHist As OutputArray = OutputArray.Create(liveHist)
+                                    Cv2.Normalize(iaLiveHist, oaLiveHist, 0, 1, NormTypes.MinMax)
+                                End Using
+                            End Using
+
+                            Using iaDocHist As InputArray = InputArray.Create(docHist)
+                                Using oaDocHist As OutputArray = OutputArray.Create(docHist)
+                                    Cv2.Normalize(iaDocHist, oaDocHist, 0, 1, NormTypes.MinMax)
+                                End Using
+                            End Using
 
                             ' Compare using correlation method
-                            Dim correlation = Cv2.CompareHist(liveHist, docHist, HistCompMethods.Correl)
+                            Dim correlation As Double
+                            Using iaLiveHist As InputArray = InputArray.Create(liveHist)
+                                Using iaDocHist As InputArray = InputArray.Create(docHist)
+                                    correlation = Cv2.CompareHist(iaLiveHist, iaDocHist, HistCompMethods.Correl)
+                                End Using
+                            End Using
                             Dim score = correlation * 100
 
                             ' Cap between 0 and 100

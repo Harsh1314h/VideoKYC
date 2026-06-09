@@ -177,8 +177,33 @@ function updateVerificationPanel(type, result) {
             .removeClass('bg-secondary bg-warning bg-danger bg-success')
             .addClass(isVerified ? 'bg-success text-dark' : 'bg-danger text-white');
             
-        // Build table
-        var html = '<table class="table table-sm table-dark table-striped mb-0">';
+        // Build image previews and fields table
+        var paths = result.ImagePath ? result.ImagePath.split(',') : [];
+        var html = '';
+        
+        if (paths.length > 0) {
+            html += '<div class="row g-2 mb-3">';
+            // Front side
+            if (paths[0]) {
+                var frontSrc = paths[0].replace('~', '') + '?t=' + new Date().getTime();
+                html += '<div class="col text-center">';
+                html += '  <span class="text-secondary-light fs-9 d-block mb-1 fw-semibold">Front Side</span>';
+                html += '  <img src="' + frontSrc + '" class="img-fluid rounded border border-secondary-light border-opacity-20" style="max-height: 120px; object-fit: contain; cursor: pointer; background: rgba(0,0,0,0.2);" onclick="window.open(\'' + frontSrc + '\', \'_blank\')" title="Click to view full size" />';
+                html += '</div>';
+            }
+            // Back side
+            if (paths.length > 1 && paths[1]) {
+                var backSrc = paths[1].replace('~', '') + '?t=' + new Date().getTime();
+                html += '<div class="col text-center">';
+                html += '  <span class="text-secondary-light fs-9 d-block mb-1 fw-semibold">Back Side</span>';
+                html += '  <img src="' + backSrc + '" class="img-fluid rounded border border-secondary-light border-opacity-20" style="max-height: 120px; object-fit: contain; cursor: pointer; background: rgba(0,0,0,0.2);" onclick="window.open(\'' + backSrc + '\', \'_blank\')" title="Click to view full size" />';
+                html += '</div>';
+            }
+            html += '</div>';
+            html += '<span class="text-secondary-light fs-9 d-block mt-1 mb-3 text-center">Click an image to view full size</span>';
+        }
+        
+        html += '<table class="table table-sm table-dark table-striped mb-0">';
         for (var key in fields) {
             html += '<tr><td class="text-secondary-light fw-medium">' + key + '</td><td>' + fields[key] + '</td></tr>';
         }

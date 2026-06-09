@@ -37,7 +37,7 @@ Namespace Handlers
                 Dim docFacePath = Path.Combine(uploadsDir, docFaceName)
 
                 ' Fallback: if doc_face.jpg doesn't exist, search for any document upload in this folder
-                If Not File.Exists(docFacePath) Then
+                If Not System.IO.File.Exists(docFacePath) Then
                     Dim files = Directory.GetFiles(uploadsDir, "doc_*.jpg")
                     If files.Length > 0 Then
                         docFacePath = files(0)
@@ -48,7 +48,7 @@ Namespace Handlers
                 Dim score = 0.0
                 Dim verified = False
 
-                If File.Exists(docFacePath) Then
+                If System.IO.File.Exists(docFacePath) Then
                     Dim faceSvc As New FaceVerificationService()
                     score = faceSvc.CompareFaces(livePath, docFacePath)
                     
@@ -69,7 +69,7 @@ Namespace Handlers
                     conn.Execute(sql, New With {
                         .sid = sessionId,
                         .lp = "~/Uploads/" & sessionId & "/" & liveName,
-                        .dp = If(File.Exists(docFacePath), "~/Uploads/" & sessionId & "/" & docFaceName, Nothing),
+                        .dp = If(System.IO.File.Exists(docFacePath), "~/Uploads/" & sessionId & "/" & docFaceName, Nothing),
                         .cs = If(verified, 90.0, 30.0), ' Client-side representation score
                         .ss = score,
                         .iv = If(verified, 1, 0)
