@@ -129,11 +129,18 @@
                             <!-- 3. Voice Verification Control -->
                             <div class="mb-4 p-3 bg-dark bg-opacity-20 border border-secondary-light border-opacity-10 rounded-3">
                                 <h6 class="fw-bold mb-2 text-gradient">3. Voice Challenge-Phrase</h6>
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <span class="fs-7 text-secondary-light">Generates customized voice prompt.</span>
-                                    <button type="button" onclick="triggerVoice()" class="btn btn-primary-gradient py-2 px-4 fs-7 fw-semibold">
-                                        Voice Challenge
-                                    </button>
+                                <div class="row g-2 align-items-center mb-3">
+                                    <div class="col-sm-7">
+                                        <select id="ddlVoicePhrase" class="form-select bg-dark border-secondary-light text-white rounded-3 fs-7 py-2">
+                                            <option id="optVoiceName" value="name">My name is [Customer Name]</option>
+                                            <option value="authorize">I authorize this KYC process</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <button type="button" onclick="triggerVoiceChallenge()" class="btn btn-primary-gradient w-100 py-2 fs-7 fw-semibold">
+                                            Voice Challenge
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="bg-dark bg-opacity-50 p-3 rounded mb-3 border border-secondary-light border-opacity-5">
                                     <div class="row g-3 text-center">

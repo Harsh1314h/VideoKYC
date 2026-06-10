@@ -106,16 +106,18 @@ function triggerFace() {
     kycProxy.invoke('triggerFaceVerification', sessionId);
 }
 
-function triggerVoice() {
-    var phrases = [
-        "Please verify my identity for video KYC session",
-        "I am the authorized holder of this account",
-        "Verifying my biometric details for secure access"
-    ];
-    var randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
-    console.log("Triggering voice challenge-phrase verification: " + randomPhrase);
-    $('#voiceStatus').text('Prompted...').removeClass('bg-success bg-danger').addClass('bg-warning text-dark');
-    kycProxy.invoke('triggerVoiceVerification', sessionId, randomPhrase);
+function triggerVoiceChallenge() {
+    var val = $('#ddlVoicePhrase').val();
+    var phrase = "";
+    if (val === 'name') {
+        var customerName = $('#lblCustName').text().trim();
+        phrase = "My name is " + customerName;
+    } else {
+        phrase = "I authorize this KYC process";
+    }
+    console.log("Triggering voice challenge-phrase verification: " + phrase);
+    $('#voiceStatus').text('Prompted...').removeClass('bg-success bg-danger bg-secondary').addClass('bg-warning text-dark');
+    kycProxy.invoke('triggerVoiceVerification', sessionId, phrase);
 }
 
 // Decision functions
@@ -165,7 +167,7 @@ function updateVerificationPanel(type, result) {
         
         $('#voiceScore').text(finalScore + '%');
         $('#voiceSpoken').text(spokenText);
-        $('#voiceStatus').text(verified ? 'Match ✓' : 'Mismatch ✗')
+        $('#voiceStatus').text(verified ? 'Voice Verified' : 'Voice Not Verified')
             .removeClass('bg-secondary bg-warning bg-danger bg-success')
             .addClass(verified ? 'bg-success text-dark' : 'bg-danger text-white');
     }
@@ -231,6 +233,12 @@ var isMuted = false;
 var isCamOff = false;
 
 $(document).ready(function () {
+    // Populate dynamic name in voice phrase option
+    var customerName = $('#lblCustName').text().trim();
+    if (customerName && customerName !== '--') {
+        $('#optVoiceName').text('My name is ' + customerName);
+    }
+
     $('#btnMute').click(function () {
         if (localStream) {
             var audioTracks = localStream.getAudioTracks();

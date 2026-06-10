@@ -2,13 +2,24 @@
 var mediaRecorder;
 var audioChunks = [];
 var recognition;
+var currentChallengePhrase = "";
 
 function startVoiceCapture(phrase) {
-    console.log("Starting voice verification challenge. Phrase: " + phrase);
+    console.log("Displaying voice verification challenge. Phrase: " + phrase);
+    currentChallengePhrase = phrase;
     
     // Set UI prompt
     $('#voicePhrase').text(phrase);
     $('#spokenTextDisplay').text('--');
+    $('#voiceInstructions').addClass('d-none');
+    $('#btnRecordVoice').text('Start Recording')
+        .addClass('btn-primary-gradient')
+        .removeClass('btn-danger')
+        .prop('disabled', false);
+}
+
+function recordAndAnalyzeVoice(phrase) {
+    console.log("Starting recording for phrase: " + phrase);
     $('#voiceInstructions').removeClass('d-none');
     $('#btnRecordVoice').text('Recording...').addClass('btn-danger').removeClass('btn-primary-gradient').prop('disabled', true);
 
@@ -85,6 +96,16 @@ function startVoiceCapture(phrase) {
             });
         });
 }
+
+$(document).ready(function () {
+    $('#btnRecordVoice').click(function () {
+        if (currentChallengePhrase) {
+            recordAndAnalyzeVoice(currentChallengePhrase);
+        } else {
+            console.warn("No active challenge phrase to record.");
+        }
+    });
+});
 
 function uploadVoiceClip(phrase) {
     var blob = new Blob(audioChunks, { type: 'audio/webm' });
