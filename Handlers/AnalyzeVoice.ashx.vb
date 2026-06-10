@@ -48,7 +48,7 @@ Namespace Handlers
                         .sid = sessionId,
                         .ap = "~/Uploads/" & sessionId & "/" & originalName,
                         .phrase = phrase,
-                        .ts = 100.0, ' Text matched on client side via Web Speech recognition
+                        .ts = 100.0,
                         .vs = score,
                         .fs = score,
                         .iv = If(score >= 70.0, 1, 0)

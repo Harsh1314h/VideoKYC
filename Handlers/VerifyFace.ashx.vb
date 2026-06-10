@@ -70,7 +70,7 @@ Namespace Handlers
                         .sid = sessionId,
                         .lp = "~/Uploads/" & sessionId & "/" & liveName,
                         .dp = If(System.IO.File.Exists(docFacePath), "~/Uploads/" & sessionId & "/" & docFaceName, Nothing),
-                        .cs = If(verified, 90.0, 30.0), ' Client-side representation score
+                        .cs = If(verified, 90.0, 30.0),
                         .ss = score,
                         .iv = If(verified, 1, 0)
                     })
