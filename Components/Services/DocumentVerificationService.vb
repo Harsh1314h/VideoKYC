@@ -37,6 +37,45 @@ Namespace Services
 
         Private Shared ReadOnly InverseTable As Integer() = {0, 4, 3, 2, 1, 5, 6, 7, 8, 9}
 
+        Private Function ValidateDocumentType(text As String, docType As String) As Boolean
+            Dim textUpper = text.ToUpper()
+            Select Case docType.ToLower()
+                Case "aadhaar"
+                    ' Aadhaar keywords
+                    Return textUpper.Contains("GOVERNMENT OF INDIA") OrElse 
+                           textUpper.Contains("UNIQUE IDENTIFICATION") OrElse 
+                           textUpper.Contains("AADHAAR") OrElse 
+                           textUpper.Contains("UIDAI") OrElse 
+                           textUpper.Contains("MALE") OrElse 
+                           textUpper.Contains("FEMALE") OrElse 
+                           textUpper.Contains("जन्म तिथि") OrElse
+                           textUpper.Contains("DOB")
+                Case "pan"
+                    ' PAN keywords: Must contain PAN keywords and NOT Aadhaar keywords
+                    Dim hasPanKeywords = textUpper.Contains("INCOME TAX") OrElse 
+                                         textUpper.Contains("PERMANENT ACCOUNT") OrElse 
+                                         textUpper.Contains("PAN CARD") OrElse 
+                                         textUpper.Contains("PAN ") OrElse
+                                         Regex.IsMatch(textUpper, "\b[A-Z]{5}\d{4}[A-Z]\b")
+                    Dim hasAadhaarKeywords = textUpper.Contains("UNIQUE IDENTIFICATION") OrElse 
+                                             textUpper.Contains("AADHAAR") OrElse 
+                                             textUpper.Contains("UIDAI")
+                    Return hasPanKeywords AndAlso Not hasAadhaarKeywords
+                Case "passport"
+                    ' Passport keywords
+                    Return textUpper.Contains("PASSPORT") OrElse 
+                           textUpper.Contains("REPUBLIC OF INDIA") OrElse 
+                           textUpper.Contains("P<IND")
+                Case "dl"
+                    ' DL keywords
+                    Return textUpper.Contains("DRIVING") OrElse 
+                           textUpper.Contains("LICENCE") OrElse 
+                           textUpper.Contains("LICENSE") OrElse 
+                           textUpper.Contains("DRIVE")
+            End Select
+            Return True
+        End Function
+
         Public Function ProcessDocument(imagePath As String, docType As String, side As String, Optional customerName As String = "") As DocumentResult
             Dim result = New DocumentResult() With {
                 .DocumentType = docType,
@@ -51,6 +90,14 @@ Namespace Services
                 ' Step 2: OCR
                 Dim rawText = RunOcr(processedPath)
                 result.RawOcrText = rawText
+
+                ' Validate document type match (only for front side)
+                If side.ToLower() = "front" AndAlso Not ValidateDocumentType(rawText, docType) Then
+                    result.IsVerified = False
+                    result.DocumentNumber = ""
+                    result.Fields("Error") = "Document type mismatch: The uploaded document does not match the requested " & docType & "."
+                    Return result
+                End If
 
                 ' Step 3: Scan QR Code (Only for Aadhaar on Front side)
                 Dim qrText = ""
@@ -213,9 +260,7 @@ Namespace Services
                         End If
                     Else
                         nameMatchResult = "Mismatch ✗ (Registered: " & customerName & ")"
-                        If isMasked Then
-                            result.IsVerified = False
-                        End If
+                        result.IsVerified = False
                     End If
                 End If
                 result.Fields("Demographic Name Match") = nameMatchResult
@@ -380,7 +425,11 @@ Namespace Services
                     Dim requiredMatches = (custWords.Length + 1) \ 2
                     If custWords.Length > 0 AndAlso matchedWords >= requiredMatches Then
                         nameMatchResult = "Matched ✓ (" & customerName & ")"
-                        result.IsVerified = True
+                        If result.DocumentNumber <> "Not Found" AndAlso Not String.IsNullOrEmpty(result.DocumentNumber) Then
+                            result.IsVerified = True
+                        Else
+                            result.IsVerified = False
+                        End If
                     Else
                         nameMatchResult = "Mismatch ✗ (Registered: " & customerName & ")"
                         result.IsVerified = False
@@ -445,7 +494,11 @@ Namespace Services
                     Dim requiredMatches = (custWords.Length + 1) \ 2
                     If custWords.Length > 0 AndAlso matchedWords >= requiredMatches Then
                         nameMatchResult = "Matched ✓ (" & customerName & ")"
-                        result.IsVerified = True
+                        If result.DocumentNumber <> "Not Found" AndAlso Not String.IsNullOrEmpty(result.DocumentNumber) Then
+                            result.IsVerified = True
+                        Else
+                            result.IsVerified = False
+                        End If
                     Else
                         nameMatchResult = "Mismatch ✗ (Registered: " & customerName & ")"
                         result.IsVerified = False
@@ -535,7 +588,11 @@ Namespace Services
                     Dim requiredMatches = (custWords.Length + 1) \ 2
                     If custWords.Length > 0 AndAlso matchedWords >= requiredMatches Then
                         nameMatchResult = "Matched ✓ (" & customerName & ")"
-                        result.IsVerified = True
+                        If result.DocumentNumber <> "Not Found" AndAlso Not String.IsNullOrEmpty(result.DocumentNumber) Then
+                            result.IsVerified = True
+                        Else
+                            result.IsVerified = False
+                        End If
                     Else
                         nameMatchResult = "Mismatch ✗ (Registered: " & customerName & ")"
                         result.IsVerified = False
