@@ -5,6 +5,11 @@ var pc;
 var localStream;
 var sessionId = getQueryParam('sid');
 
+// Verification state flags
+var docVerified = typeof initialDocVerified !== 'undefined' ? initialDocVerified : false;
+var faceVerified = typeof initialFaceVerified !== 'undefined' ? initialFaceVerified : false;
+var voiceVerified = typeof initialVoiceVerified !== 'undefined' ? initialVoiceVerified : false;
+
 // -- SignalR event handlers (incoming from server) --
 
 kycProxy.on('receiveOffer', async function (offer) {
@@ -54,6 +59,10 @@ kycProxy.on('receiveIceCandidate', function (candidate) {
 kycProxy.on('receiveVerificationResult', function (type, json) {
     console.log("Verification Result received: " + type, json);
     updateVerificationPanel(type, JSON.parse(json));
+});
+
+kycProxy.on('showApprovalError', function (errorMsg) {
+    alert(errorMsg);
 });
 
 kycProxy.on('participantDisconnected', function () {
@@ -122,6 +131,10 @@ function triggerVoiceChallenge() {
 
 // Decision functions
 function approveKyc() {
+    if (!docVerified || !faceVerified || !voiceVerified) {
+        alert("Cannot Approve KYC: All checks (Document OCR, Biometric Face Match, and Voice Verification) must be successfully verified before approval.");
+        return;
+    }
     if (confirm("Are you sure you want to APPROVE this customer's KYC?")) {
         kycProxy.invoke('approveKyc', sessionId)
             .done(function () {
@@ -154,6 +167,7 @@ function updateVerificationPanel(type, result) {
     if (type === 'face') {
         var score = result.score;
         var verified = result.verified;
+        faceVerified = verified;
         
         $('#faceScore').text(score + '%');
         $('#faceStatus').text(verified ? 'Match ✓' : 'Mismatch ✗')
@@ -163,6 +177,7 @@ function updateVerificationPanel(type, result) {
     else if (type === 'voice') {
         var finalScore = result.finalScore;
         var verified = result.verified;
+        voiceVerified = verified;
         var spokenText = result.spokenText;
         
         $('#voiceScore').text(finalScore + '%');
@@ -173,6 +188,7 @@ function updateVerificationPanel(type, result) {
     }
     else if (type === 'document') {
         var isVerified = result.IsVerified;
+        docVerified = isVerified;
         var fields = result.Fields;
         
         $('#docStatus').text(isVerified ? 'Extracted ✓' : 'Failed ✗')
@@ -237,6 +253,24 @@ $(document).ready(function () {
     var customerName = $('#lblCustName').text().trim();
     if (customerName && customerName !== '--') {
         $('#optVoiceName').text('My name is ' + customerName);
+    }
+
+    // Initialize UI badges from initial verification state
+    if (docVerified) {
+        $('#docStatus').text('Extracted ✓')
+            .removeClass('bg-secondary bg-warning bg-danger')
+            .addClass('bg-success text-dark');
+        $('#docExtractedData').html('<div class="text-success fs-8">Verified previously. Reload/Re-upload if needed.</div>');
+    }
+    if (faceVerified) {
+        $('#faceStatus').text('Match ✓')
+            .removeClass('bg-secondary bg-warning bg-danger')
+            .addClass('bg-success text-dark');
+    }
+    if (voiceVerified) {
+        $('#voiceStatus').text('Voice Verified')
+            .removeClass('bg-secondary bg-warning bg-danger')
+            .addClass('bg-success text-dark');
     }
 
     $('#btnMute').click(function () {

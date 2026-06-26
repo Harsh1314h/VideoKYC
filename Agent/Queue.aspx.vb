@@ -5,6 +5,8 @@ Partial Public Class Queue
 
     Protected lblAgentName As Global.System.Web.UI.WebControls.Label
     Protected gvSessions As Global.System.Web.UI.WebControls.GridView
+    Protected pnlActiveSessions As Global.System.Web.UI.WebControls.Panel
+    Protected gvActiveSessions As Global.System.Web.UI.WebControls.GridView
 
     Private ReadOnly _sessionSvc As New SessionService()
 
@@ -45,6 +47,16 @@ Partial Public Class Queue
 
     Private Sub BindQueue()
         Try
+            Dim agentId = Convert.ToInt32(Session("AgentId"))
+            Dim activeSessions = _sessionSvc.GetActiveSessionsForAgent(agentId).ToList()
+            If activeSessions.Count > 0 Then
+                pnlActiveSessions.Visible = True
+                gvActiveSessions.DataSource = activeSessions
+                gvActiveSessions.DataBind()
+            Else
+                pnlActiveSessions.Visible = False
+            End If
+
             gvSessions.DataSource = _sessionSvc.GetWaitingSessions()
             gvSessions.DataBind()
         Catch
@@ -54,6 +66,13 @@ Partial Public Class Queue
 
     Protected Sub btnRefresh_Click(sender As Object, e As EventArgs)
         BindQueue()
+    End Sub
+
+    Protected Sub gvActiveSessions_RowCommand(sender As Object, e As GridViewCommandEventArgs)
+        If e.CommandName = "ReconnectCall" Then
+            Dim sessionId = e.CommandArgument.ToString()
+            Response.Redirect("Session.aspx?sid=" & sessionId)
+        End If
     End Sub
 
     Protected Sub gvSessions_RowCommand(sender As Object, e As GridViewCommandEventArgs)

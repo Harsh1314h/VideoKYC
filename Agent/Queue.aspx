@@ -29,6 +29,35 @@
             <div class="glow-bg position-absolute top-50 start-50 translate-middle"></div>
             
             <div class="position-relative z-1">
+                <!-- Reconnect Active Sessions Panel -->
+                <asp:Panel ID="pnlActiveSessions" runat="server" Visible="false" CssClass="mb-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h3 class="fw-bold mb-1 text-success">Your Active Sessions</h3>
+                            <p class="text-secondary-light mb-0">You are currently conducting these calls. Click Reconnect to rejoin.</p>
+                        </div>
+                    </div>
+                    <div class="glass-card p-4 border border-success border-opacity-20">
+                        <asp:GridView ID="gvActiveSessions" runat="server" AutoGenerateColumns="False" OnRowCommand="gvActiveSessions_RowCommand" 
+                                      CssClass="table table-dark table-hover border-0 mb-0" 
+                                      GridLines="None" DataKeyNames="SessionId">
+                            <Columns>
+                                <asp:BoundField DataField="CustomerName" HeaderText="Customer Name" HeaderStyle-CssClass="text-secondary-light fw-semibold" ItemStyle-CssClass="py-3 fs-6" />
+                                <asp:BoundField DataField="CustomerPhone" HeaderText="Phone" HeaderStyle-CssClass="text-secondary-light fw-semibold" ItemStyle-CssClass="py-3" />
+                                <asp:BoundField DataField="UpdatedAt" HeaderText="Last Heartbeat" HeaderStyle-CssClass="text-secondary-light fw-semibold" ItemStyle-CssClass="py-3 text-secondary-light fs-7" DataFormatString="{0:hh:mm:ss tt}" />
+                                <asp:TemplateField HeaderText="Actions" HeaderStyle-CssClass="text-secondary-light fw-semibold text-end" ItemStyle-CssClass="text-end py-3">
+                                    <ItemTemplate>
+                                        <asp:Button ID="btnReconnect" runat="server" 
+                                                    CssClass="btn btn-success w-auto px-4 py-2 fw-semibold rounded-3 text-dark bg-success border-0 shadow" 
+                                                    Text="Reconnect" CommandName="ReconnectCall" 
+                                                    CommandArgument='<%# Eval("SessionId") %>' />
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+                            </Columns>
+                        </asp:GridView>
+                    </div>
+                </asp:Panel>
+
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
                         <h2 class="fw-bold mb-1">Incoming Call Queue</h2>

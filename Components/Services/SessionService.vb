@@ -150,5 +150,43 @@ Namespace Services
                 conn.Execute(sql, New With {.Phone = phone})
             End Using
         End Sub
+
+        ' ── Get All Active Sessions for an Agent ────────────────────────────
+        Public Function GetActiveSessionsForAgent(agentId As Integer) As IEnumerable(Of KycSession)
+            Dim sql As String = "SELECT s.*, c.FullName As CustomerName, c.Phone As CustomerPhone " &
+                      "FROM KycSessions s " &
+                      "INNER JOIN Customers c ON s.CustomerId = c.CustomerId " &
+                      "WHERE s.Status = 'InProgress' AND s.AgentId = @aid " &
+                      "ORDER BY s.UpdatedAt DESC"
+                      
+            Using conn As SqlConnection = DatabaseHelper.GetConnection()
+                Return conn.Query(Of KycSession)(sql, New With {.aid = agentId})
+            End Using
+        End Function
+
+        ' ── Check if Session is Approvable (all verifications passed) ───────
+        Public Function CanApproveSession(sessionId As String) As Boolean
+            Using conn As SqlConnection = DatabaseHelper.GetConnection()
+                ' 1. Check if there is at least one verified document for this session
+                Dim docVerified As Boolean = conn.ExecuteScalar(Of Boolean)(
+                    "SELECT COALESCE((SELECT TOP 1 IsVerified FROM DocumentVerifications WHERE SessionId = @sid AND IsVerified = 1), 0)",
+                    New With {.sid = sessionId}
+                )
+
+                ' 2. Check if face is verified for this session
+                Dim faceVerified As Boolean = conn.ExecuteScalar(Of Boolean)(
+                    "SELECT COALESCE((SELECT TOP 1 IsVerified FROM FaceVerifications WHERE SessionId = @sid AND IsVerified = 1), 0)",
+                    New With {.sid = sessionId}
+                )
+
+                ' 3. Check if voice is verified for this session
+                Dim voiceVerified As Boolean = conn.ExecuteScalar(Of Boolean)(
+                    "SELECT COALESCE((SELECT TOP 1 IsVerified FROM VoiceVerifications WHERE SessionId = @sid AND IsVerified = 1), 0)",
+                    New With {.sid = sessionId}
+                )
+
+                Return docVerified AndAlso faceVerified AndAlso voiceVerified
+            End Using
+        End Function
     End Class
 End Namespace

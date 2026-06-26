@@ -106,8 +106,13 @@ Namespace Hubs
         ' ── KYC Decisions (Agent ─► Customer & DB) ───────────────────────────
 
         Public Async Function ApproveKyc(sessionId As String) As Task
-            Await Clients.Group(sessionId).kycApproved()
             Dim svc As New SessionService()
+            If Not svc.CanApproveSession(sessionId) Then
+                Await Clients.Caller.showApprovalError("Cannot Approve KYC: All checks (Document OCR, Biometric Face Match, and Voice Verification) must be successfully verified before approval.")
+                Return
+            End If
+            
+            Await Clients.Group(sessionId).kycApproved()
             svc.UpdateSessionStatus(sessionId, "Approved")
         End Function
 
