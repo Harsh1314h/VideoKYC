@@ -16,6 +16,23 @@ Partial Public Class Queue
             Return
         End If
 
+        ' Handle agent leaving session prematurely
+        If Request.QueryString("action") = "leave" Then
+            Dim leaveSessionId = Request.QueryString("sid")
+            If Not String.IsNullOrEmpty(leaveSessionId) Then
+                Try
+                    Dim sessionData = _sessionSvc.GetSession(leaveSessionId)
+                    If sessionData IsNot Nothing AndAlso sessionData.Status = "InProgress" Then
+                        _sessionSvc.UpdateSessionStatus(leaveSessionId, "Waiting")
+                    End If
+                Catch ex As Exception
+                    ' Ignore database errors on leave
+                End Try
+            End If
+            Response.Redirect("Queue.aspx")
+            Return
+        End If
+
         ' Set officer welcome details
         If Session("AgentName") IsNot Nothing Then
             lblAgentName.Text = Session("AgentName").ToString()

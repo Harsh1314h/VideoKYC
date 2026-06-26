@@ -26,6 +26,10 @@ Partial Public Class AgentSession
         Dim sessionData = sessionSvc.GetSession(sessionId)
         
         If sessionData IsNot Nothing Then
+            If sessionData.Status = "Approved" OrElse sessionData.Status = "Rejected" Then
+                Response.Redirect("Queue.aspx")
+                Return
+            End If
             lblCustName.Text = sessionData.CustomerName
             hdnSessionId.Value = sessionId
         Else

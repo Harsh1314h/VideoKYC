@@ -13,6 +13,22 @@ Partial Public Class Register
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         ' Handle explicit end-call / logout action
         If Request.QueryString("action") = "logout" Then
+            Dim currentSessionId As String = TryCast(Session("SessionId"), String)
+            If Not String.IsNullOrEmpty(currentSessionId) Then
+                Try
+                    Dim sessionSvc As New SessionService()
+                    Dim sessionData = sessionSvc.GetSession(currentSessionId)
+                    If sessionData IsNot Nothing Then
+                        If sessionData.Status = "Waiting" Then
+                            sessionSvc.UpdateSessionStatus(currentSessionId, "Rejected", "Cancelled by customer in waiting room")
+                        ElseIf sessionData.Status = "InProgress" Then
+                            sessionSvc.UpdateSessionStatus(currentSessionId, "Rejected", "Call ended by customer")
+                        End If
+                    End If
+                Catch ex As Exception
+                    ' Ignore database errors on cancel/end
+                End Try
+            End If
             Session("SessionId") = Nothing
             Session("CustomerName") = Nothing
             Session("CustomerId") = Nothing
@@ -31,6 +47,17 @@ Partial Public Class Register
 
             If String.IsNullOrEmpty(name) OrElse String.IsNullOrEmpty(phone) Then
                 Throw New Exception("Please enter your name and phone number.")
+            End If
+
+            ' Enforce name limit of 100 characters
+            If name.Length > 100 Then
+                Throw New Exception("Full name must not exceed 100 characters.")
+            End If
+
+            ' Validate full name contains only letters and spaces, and at least a first and last name
+            Dim nameRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z]{2,}(?:\s+[a-zA-Z]{2,})+$")
+            If Not nameRegex.IsMatch(name) Then
+                Throw New Exception("Please enter your full name (both first name and last name, containing only letters with at least 2 characters each).")
             End If
 
             ' Validate phone length is exactly 10 digits and only numbers
@@ -80,6 +107,11 @@ Partial Public Class Register
             Dim sessionData = sessionSvc.GetSession(sessionId)
 
             If sessionData IsNot Nothing Then
+                ' Enforce that already completed (Approved/Rejected) sessions cannot be rejoined
+                If sessionData.Status = "Approved" OrElse sessionData.Status = "Rejected" Then
+                    Throw New Exception("This verification session has already been completed (" & sessionData.Status & "). You cannot rejoin it.")
+                End If
+
                 ' Restore session details
                 Session("SessionId") = sessionData.SessionId
                 Session("CustomerName") = sessionData.CustomerName

@@ -22,7 +22,7 @@
                     <span class="pulse-circle me-2"></span>
                     <span class="text-secondary-light me-3">Session: <strong class="text-white" id="lblTitleSessionId">--</strong></span>
                     <span class="text-secondary-light me-3">Customer: <strong class="text-white"><asp:Label ID="lblCustName" runat="server">--</asp:Label></strong></span>
-                    <a href="Queue.aspx" class="btn btn-outline-danger btn-sm rounded-pill px-3">Leave Session</a>
+                    <a href="Queue.aspx?action=leave&sid=<%=Request.QueryString("sid")%>" class="btn btn-outline-danger btn-sm rounded-pill px-3">Leave Session</a>
                 </span>
             </div>
         </nav>
