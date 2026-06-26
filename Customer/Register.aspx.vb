@@ -72,6 +72,7 @@ Partial Public Class Register
 
             ' Insert to database and create session
             Dim sessionSvc As New SessionService()
+            sessionSvc.CancelActiveSessionsByPhone(phone)
             Dim customer = sessionSvc.RegisterCustomer(name, phone)
             Dim sessionId = sessionSvc.CreateSession(customer.CustomerId)
 

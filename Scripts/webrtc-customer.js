@@ -195,4 +195,11 @@ $(document).ready(function () {
             }
         }
     });
+
+    // Periodic heartbeat to keep session active in DB
+    setInterval(function () {
+        if (sessionId) {
+            kycProxy.invoke('keepAlive', sessionId);
+        }
+    }, 5000);
 });

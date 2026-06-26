@@ -59,6 +59,20 @@ Partial Public Class Queue
     Protected Sub gvSessions_RowCommand(sender As Object, e As GridViewCommandEventArgs)
         If e.CommandName = "JoinCall" Then
             Dim sessionId = e.CommandArgument.ToString()
+            
+            ' Validate that the session is still in 'Waiting' status before assigning the agent
+            Dim sessionData = _sessionSvc.GetSession(sessionId)
+            If sessionData Is Nothing Then
+                BindQueue()
+                Return
+            End If
+            
+            If sessionData.Status <> "Waiting" Then
+                BindQueue()
+                ClientScript.RegisterStartupScript(Me.GetType(), "SessionClosedAlert", "alert('This session is no longer available (it may have been cancelled or picked up by another officer).');", True)
+                Return
+            End If
+
             Dim agentId = Convert.ToInt32(Session("AgentId"))
 
             ' Assign the current agent to the customer's call session (marks status 'InProgress')

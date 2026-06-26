@@ -17,6 +17,7 @@ Partial Public Class WaitingRoom
     Public Shared Function CheckSessionStatus(sessionId As String) As String
         Try
             Dim svc As New SessionService()
+            svc.KeepSessionAlive(sessionId) ' Update heartbeat
             Dim sessionData = svc.GetSession(sessionId)
             If sessionData IsNot Nothing Then
                 Return sessionData.Status

@@ -117,6 +117,11 @@ Namespace Hubs
             svc.UpdateSessionStatus(sessionId, "Rejected", reason)
         End Function
 
+        Public Sub KeepAlive(sessionId As String)
+            Dim svc As New SessionService()
+            svc.KeepSessionAlive(sessionId)
+        End Sub
+
         ' ── Disconnect Handling ─────────────────────────────────────────────
 
         Public Overrides Function OnDisconnected(stopCalled As Boolean) As Task

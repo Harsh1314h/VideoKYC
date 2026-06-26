@@ -43,14 +43,36 @@ Namespace Services
 
         ' ── Get All Waiting Sessions ────────────────────────────────────────
         Public Function GetWaitingSessions() As IEnumerable(Of KycSession)
-            Dim sql As String = "SELECT s.*, c.FullName As CustomerName, c.Phone As CustomerPhone " &
+            ' 1. Auto-cleanup stale sessions (no heartbeat)
+            Dim cleanupSql As String = 
+                "UPDATE KycSessions " &
+                "SET Status = 'Rejected', RejectionReason = 'Customer left waiting room', UpdatedAt = GETUTCDATE() " &
+                "WHERE Status = 'Waiting' " &
+                "  AND (" &
+                "    (UpdatedAt IS NOT NULL AND DATEDIFF(second, UpdatedAt, GETUTCDATE()) > 30) " &
+                "    OR (UpdatedAt IS NULL AND DATEDIFF(second, CreatedAt, GETUTCDATE()) > 30) " &
+                "  ); " &
+                "UPDATE KycSessions " &
+                "SET Status = 'Rejected', RejectionReason = 'Call timed out / abandoned', UpdatedAt = GETUTCDATE() " &
+                "WHERE Status = 'InProgress' " &
+                "  AND (" &
+                "    (UpdatedAt IS NOT NULL AND DATEDIFF(second, UpdatedAt, GETUTCDATE()) > 60) " &
+                "    OR (UpdatedAt IS NULL AND DATEDIFF(second, CreatedAt, GETUTCDATE()) > 60) " &
+                "  );"
+
+            Dim selectSql As String = "SELECT s.*, c.FullName As CustomerName, c.Phone As CustomerPhone " &
                       "FROM KycSessions s " &
                       "INNER JOIN Customers c ON s.CustomerId = c.CustomerId " &
                       "WHERE s.Status = 'Waiting' " &
                       "ORDER BY s.CreatedAt ASC"
                       
             Using conn As SqlConnection = DatabaseHelper.GetConnection()
-                Return conn.Query(Of KycSession)(sql)
+                Try
+                    conn.Execute(cleanupSql)
+                Catch
+                    ' Ignore errors if database schema has transient locks
+                End Try
+                Return conn.Query(Of KycSession)(selectSql)
             End Using
         End Function
 
@@ -105,6 +127,27 @@ Namespace Services
                     .det = details,
                     .by = performedBy
                 })
+            End Using
+        End Sub
+
+        ' ── Keep Session Alive Heartbeat ────────────────────────────────────
+        Public Sub KeepSessionAlive(sessionId As String)
+            Dim sql As String = "UPDATE KycSessions SET UpdatedAt = GETUTCDATE() WHERE SessionId = @sid"
+            Using conn As SqlConnection = DatabaseHelper.GetConnection()
+                conn.Execute(sql, New With {.sid = sessionId})
+            End Using
+        End Sub
+
+        ' ── Cancel All Active Sessions for a Phone Number ───────────────────
+        Public Sub CancelActiveSessionsByPhone(phone As String)
+            Dim sql As String = "UPDATE KycSessions " &
+                      "SET Status = 'Rejected', RejectionReason = 'Cancelled - New session started', UpdatedAt = GETUTCDATE() " &
+                      "FROM KycSessions s " &
+                      "INNER JOIN Customers c ON s.CustomerId = c.CustomerId " &
+                      "WHERE c.Phone = @Phone AND s.Status IN ('Waiting', 'InProgress')"
+            
+            Using conn As SqlConnection = DatabaseHelper.GetConnection()
+                conn.Execute(sql, New With {.Phone = phone})
             End Using
         End Sub
     End Class
