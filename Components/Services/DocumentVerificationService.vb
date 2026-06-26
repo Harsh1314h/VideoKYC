@@ -397,13 +397,20 @@ Namespace Services
                 Dim lines = text.Split(New String() {vbCrLf, vbLf}, StringSplitOptions.RemoveEmptyEntries)
                 Dim lineIndex = 0
                 For Each line As String In lines
-                    If line.ToUpper().Contains("NAME") OrElse line.Contains("नाम") Then
-                        If lineIndex + 1 < lines.Length Then
+                    Dim upperLine = line.ToUpper()
+                    If (upperLine.Contains("NAME") OrElse line.Contains("नाम")) AndAlso Not upperLine.Contains("FATHER") AndAlso Not line.Contains("पिता") Then
+                        Dim colonIdx = line.IndexOf(":")
+                        If colonIdx >= 0 AndAlso colonIdx < line.Length - 1 Then
+                            result.Fields("Name") = line.Substring(colonIdx + 1).Trim()
+                        ElseIf lineIndex + 1 < lines.Length Then
                             result.Fields("Name") = lines(lineIndex + 1).Trim()
                         End If
                     End If
-                    If line.ToUpper().Contains("FATHER") OrElse line.Contains("पिता") Then
-                        If lineIndex + 1 < lines.Length Then
+                    If upperLine.Contains("FATHER") OrElse line.Contains("पिता") Then
+                        Dim colonIdx = line.IndexOf(":")
+                        If colonIdx >= 0 AndAlso colonIdx < line.Length - 1 Then
+                            result.Fields("Father's Name") = line.Substring(colonIdx + 1).Trim()
+                        ElseIf lineIndex + 1 < lines.Length Then
                             result.Fields("Father's Name") = lines(lineIndex + 1).Trim()
                         End If
                     End If
