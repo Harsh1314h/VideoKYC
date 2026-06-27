@@ -97,7 +97,14 @@ async function startLocalCamera() {
         document.getElementById('agentVideo').srcObject = localStream;
     } catch (e) {
         console.error("Camera access denied: ", e);
-        alert("Camera Access Denied! Please allow camera permissions to conduct calls.");
+        $('#statusSpinner').addClass('d-none');
+        $('#statusMsg').text("Camera/Microphone Access Denied!").addClass("text-danger");
+        $('#statusDetails').html(
+            "To grant access: Click the <strong>padlock icon (🔒)</strong> next to the website URL in your browser's address bar, " +
+            "change the <strong>Camera</strong> and <strong>Microphone</strong> settings to <strong>Allow</strong>, and then refresh the page."
+        ).removeClass("text-secondary-light").addClass("text-warning fs-7 mt-2 d-block");
+        $('#statusOverlay').removeClass('d-none');
+        alert("Camera/Microphone Access Denied!\n\nTo conduct KYC verification sessions, please click the lock icon (🔒) in your browser's address bar, allow Camera/Microphone, and refresh the page.");
     }
 }
 
@@ -273,38 +280,16 @@ $(document).ready(function () {
             .addClass('bg-success text-dark');
     }
 
-    $('#btnMute').click(function () {
-        if (localStream) {
-            var audioTracks = localStream.getAudioTracks();
-            if (audioTracks.length > 0) {
-                isMuted = !isMuted;
-                audioTracks[0].enabled = !isMuted;
-                
-                if (isMuted) {
-                    $(this).removeClass('btn-outline-light').addClass('btn-danger').attr('title', 'Unmute Microphone').html(MIC_OFF_SVG);
-                } else {
-                    $(this).removeClass('btn-danger').addClass('btn-outline-light').attr('title', 'Mute Microphone').html(MIC_ON_SVG);
-                }
-                console.log("Microphone " + (isMuted ? "muted" : "unmuted"));
-            }
-        }
+    $('#btnMute').click(function (e) {
+        e.preventDefault();
+        alert("Microphone cannot be turned off during an active KYC session.");
+        return false;
     });
 
-    $('#btnCamOff').click(function () {
-        if (localStream) {
-            var videoTracks = localStream.getVideoTracks();
-            if (videoTracks.length > 0) {
-                isCamOff = !isCamOff;
-                videoTracks[0].enabled = !isCamOff;
-                
-                if (isCamOff) {
-                    $(this).removeClass('btn-outline-light').addClass('btn-danger').attr('title', 'Turn Camera On').html(CAM_OFF_SVG);
-                } else {
-                    $(this).removeClass('btn-danger').addClass('btn-outline-light').attr('title', 'Turn Camera Off').html(CAM_ON_SVG);
-                }
-                console.log("Camera " + (isCamOff ? "disabled" : "enabled"));
-            }
-        }
+    $('#btnCamOff').click(function (e) {
+        e.preventDefault();
+        alert("Camera cannot be turned off during an active KYC session.");
+        return false;
     });
 
     // Periodic heartbeat to keep session active in DB

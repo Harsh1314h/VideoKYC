@@ -24,6 +24,11 @@ Namespace Handlers
                     Throw New Exception("No document image was uploaded.")
                 End If
                 Dim file = context.Request.Files(0)
+                
+                ' Restrict file size to 5MB max
+                If file.ContentLength > 5 * 1024 * 1024 Then
+                    Throw New Exception("File size exceeds the limit of 5MB. Please upload a smaller file.")
+                End If
 
                 If String.IsNullOrEmpty(sessionId) OrElse String.IsNullOrEmpty(docType) Then
                     Throw New Exception("Session ID or Document Type is missing.")

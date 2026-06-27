@@ -41,11 +41,11 @@
                         
                         <!-- Connection Status Alert overlay -->
                         <div id="statusOverlay" class="position-absolute top-50 start-50 translate-middle text-center p-4 bg-dark bg-opacity-75 rounded-4 border border-secondary-light border-opacity-10" style="max-width: 400px; z-index: 5;">
-                            <div class="spinner-border text-primary mb-3" role="status">
+                            <div id="statusSpinner" class="spinner-border text-primary mb-3" role="status">
                                 <span class="visually-hidden">Loading...</span>
                             </div>
                             <h5 id="statusMsg" class="fw-bold mb-1 text-primary">Initializing Camera...</h5>
-                            <p class="text-secondary-light mb-0 fs-7">Please grant camera and microphone permissions when prompted.</p>
+                            <p id="statusDetails" class="text-secondary-light mb-0 fs-7">Please grant camera and microphone permissions when prompted.</p>
                         </div>
                     </div>
 

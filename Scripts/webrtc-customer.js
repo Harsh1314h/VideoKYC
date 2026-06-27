@@ -9,7 +9,10 @@ var sessionId = document.getElementById('hdnSessionId').value;
 
 kycProxy.on('agentJoined', function () {
     console.log("Officer joined call. Initiating WebRTC offer...");
+    $('#statusOverlay').removeClass('d-none');
+    $('#statusSpinner').removeClass('d-none');
     $('#statusMsg').text('Officer connected. Starting video stream...');
+    $('#statusDetails').text('Negotiating peer WebRTC connection...');
     createOffer(); // Customer always initiates SDP negotiation
 });
 
@@ -53,7 +56,9 @@ kycProxy.on('kycRejected', function (reason) {
 kycProxy.on('participantDisconnected', function () {
     console.warn("Officer disconnected from call.");
     $('#statusOverlay').removeClass('d-none');
+    $('#statusSpinner').removeClass('d-none');
     $('#statusMsg').text("Officer Disconnected. Re-waiting...");
+    $('#statusDetails').text("The officer has disconnected. Please stay on the page while they reconnect.");
     if (pc) {
         pc.close();
         pc = null;
@@ -83,7 +88,12 @@ async function startLocalCamera() {
         $('#statusOverlay').addClass('d-none'); // Hide loading overlay
     } catch (e) {
         console.error("Camera access denied: ", e);
-        $('#statusMsg').text("Camera Access Denied! Please enable permissions and refresh.").addClass("text-danger");
+        $('#statusSpinner').addClass('d-none');
+        $('#statusMsg').text("Camera/Microphone Access Denied!").addClass("text-danger");
+        $('#statusDetails').html(
+            "To grant access: Click the <strong>padlock icon (🔒)</strong> next to the website URL in your browser's address bar, " +
+            "change the <strong>Camera</strong> and <strong>Microphone</strong> settings to <strong>Allow</strong>, and then refresh the page."
+        ).removeClass("text-secondary-light").addClass("text-warning fs-7 mt-2 d-block");
     }
 }
 
@@ -162,38 +172,16 @@ var isMuted = false;
 var isCamOff = false;
 
 $(document).ready(function () {
-    $('#btnMute').click(function () {
-        if (localStream) {
-            var audioTracks = localStream.getAudioTracks();
-            if (audioTracks.length > 0) {
-                isMuted = !isMuted;
-                audioTracks[0].enabled = !isMuted;
-                
-                if (isMuted) {
-                    $(this).removeClass('btn-outline-light').addClass('btn-danger').attr('title', 'Unmute Microphone').html(MIC_OFF_SVG);
-                } else {
-                    $(this).removeClass('btn-danger').addClass('btn-outline-light').attr('title', 'Mute Microphone').html(MIC_ON_SVG);
-                }
-                console.log("Microphone " + (isMuted ? "muted" : "unmuted"));
-            }
-        }
+    $('#btnMute').click(function (e) {
+        e.preventDefault();
+        alert("Microphone cannot be turned off during an active KYC session.");
+        return false;
     });
 
-    $('#btnCamOff').click(function () {
-        if (localStream) {
-            var videoTracks = localStream.getVideoTracks();
-            if (videoTracks.length > 0) {
-                isCamOff = !isCamOff;
-                videoTracks[0].enabled = !isCamOff;
-                
-                if (isCamOff) {
-                    $(this).removeClass('btn-outline-light').addClass('btn-danger').attr('title', 'Turn Camera On').html(CAM_OFF_SVG);
-                } else {
-                    $(this).removeClass('btn-danger').addClass('btn-outline-light').attr('title', 'Turn Camera Off').html(CAM_ON_SVG);
-                }
-                console.log("Camera " + (isCamOff ? "disabled" : "enabled"));
-            }
-        }
+    $('#btnCamOff').click(function (e) {
+        e.preventDefault();
+        alert("Camera cannot be turned off during an active KYC session.");
+        return false;
     });
 
     // Periodic heartbeat to keep session active in DB

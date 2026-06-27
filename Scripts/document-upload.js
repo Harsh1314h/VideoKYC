@@ -36,6 +36,18 @@ $(document).ready(function () {
     function uploadImageSide(file, side) {
         if (!file) return;
 
+        // Check file size (limit: 5MB)
+        var maxSizeBytes = 5 * 1024 * 1024;
+        if (file.size > maxSizeBytes) {
+            alert("File size exceeds the limit of 5MB. Please upload a smaller image file.");
+            if (side === 'front') {
+                $('#docUploadFront').val('');
+            } else {
+                $('#docUploadBack').val('');
+            }
+            return;
+        }
+
         // Instantly preview locally
         previewLocalFile(file, side);
 
