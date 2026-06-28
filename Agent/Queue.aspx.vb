@@ -22,11 +22,10 @@ Partial Public Class Queue
         If Request.QueryString("action") = "leave" Then
             Dim leaveSessionId = Request.QueryString("sid")
             If Not String.IsNullOrEmpty(leaveSessionId) Then
+                ' Keep the session as InProgress so the agent can reconnect to it from the dashboard reconnect panel
                 Try
                     Dim sessionData = _sessionSvc.GetSession(leaveSessionId)
-                    If sessionData IsNot Nothing AndAlso sessionData.Status = "InProgress" Then
-                        _sessionSvc.UpdateSessionStatus(leaveSessionId, "Waiting")
-                    End If
+                    ' We preserve the InProgress state so the agent sees the Reconnect option
                 Catch ex As Exception
                     ' Ignore database errors on leave
                 End Try

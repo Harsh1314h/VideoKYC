@@ -7,6 +7,19 @@ var sessionId = document.getElementById('hdnSessionId').value;
 
 // -- SignalR event handlers (incoming from server) --
 
+var remoteCandidatesQueue = [];
+
+function processQueuedCandidates() {
+    console.log("Processing " + remoteCandidatesQueue.length + " queued ICE candidates...");
+    while (remoteCandidatesQueue.length > 0) {
+        var candidate = remoteCandidatesQueue.shift();
+        if (pc && pc.remoteDescription && pc.remoteDescription.type) {
+            pc.addIceCandidate(new RTCIceCandidate(JSON.parse(candidate)))
+              .catch(e => console.error("Error adding queued ICE candidate: ", e));
+        }
+    }
+}
+
 kycProxy.on('agentJoined', function () {
     console.log("Officer joined call. Initiating WebRTC offer...");
     $('#statusOverlay').removeClass('d-none');
@@ -17,15 +30,23 @@ kycProxy.on('agentJoined', function () {
 });
 
 kycProxy.on('receiveAnswer', function (answer) {
-    console.log("SDP Answer received from officer.");
+    console.log("SDP Answer received from officer. Setting remote description...");
     pc.setRemoteDescription(new RTCSessionDescription(JSON.parse(answer)))
+      .then(function() {
+          processQueuedCandidates();
+      })
       .catch(e => console.error("Error setting remote description: ", e));
 });
 
 kycProxy.on('receiveIceCandidate', function (candidate) {
     console.log("ICE candidate received from officer.");
-    pc.addIceCandidate(new RTCIceCandidate(JSON.parse(candidate)))
-      .catch(e => console.error("Error adding ICE candidate: ", e));
+    if (pc && pc.remoteDescription && pc.remoteDescription.type) {
+        pc.addIceCandidate(new RTCIceCandidate(JSON.parse(candidate)))
+          .catch(e => console.error("Error adding ICE candidate: ", e));
+    } else {
+        console.log("Queueing early ICE candidate from officer.");
+        remoteCandidatesQueue.push(candidate);
+    }
 });
 
 // Verification triggers from officer
@@ -98,6 +119,7 @@ async function startLocalCamera() {
 }
 
 async function createOffer() {
+    remoteCandidatesQueue = [];
     pc = new RTCPeerConnection({
         iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
     });
@@ -113,6 +135,22 @@ async function createOffer() {
     pc.ontrack = function (event) {
         console.log("Remote track received from officer.");
         document.getElementById('remoteVideo').srcObject = event.streams[0];
+        $('#statusOverlay').addClass('d-none'); // Hide loading overlay
+    };
+
+    // Handle connection state changes to hide overlay when connected
+    pc.onconnectionstatechange = function() {
+        console.log("WebRTC Connection State: " + pc.connectionState);
+        if (pc.connectionState === 'connected') {
+            $('#statusOverlay').addClass('d-none');
+        }
+    };
+
+    pc.oniceconnectionstatechange = function() {
+        console.log("WebRTC ICE Connection State: " + pc.iceConnectionState);
+        if (pc.iceConnectionState === 'connected' || pc.iceConnectionState === 'completed') {
+            $('#statusOverlay').addClass('d-none');
+        }
     };
 
     // Handle candidate generation

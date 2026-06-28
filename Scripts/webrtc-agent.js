@@ -12,9 +12,23 @@ var voiceVerified = typeof initialVoiceVerified !== 'undefined' ? initialVoiceVe
 
 // -- SignalR event handlers (incoming from server) --
 
+var remoteCandidatesQueue = [];
+
+function processQueuedCandidates() {
+    console.log("Processing " + remoteCandidatesQueue.length + " queued ICE candidates...");
+    while (remoteCandidatesQueue.length > 0) {
+        var candidate = remoteCandidatesQueue.shift();
+        if (pc && pc.remoteDescription && pc.remoteDescription.type) {
+            pc.addIceCandidate(new RTCIceCandidate(JSON.parse(candidate)))
+              .catch(e => console.error("Error adding queued ICE candidate: ", e));
+        }
+    }
+}
+
 kycProxy.on('receiveOffer', async function (offer) {
     console.log("SDP Offer received from customer. Creating RTC Connection...");
     $('#statusMsg').text('Customer connected. Opening stream...');
+    remoteCandidatesQueue = [];
     
     pc = new RTCPeerConnection({
         iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
@@ -34,6 +48,21 @@ kycProxy.on('receiveOffer', async function (offer) {
         $('#statusOverlay').addClass('d-none'); // Hide loading overlay
     };
 
+    // Handle connection state changes to hide overlay when connected
+    pc.onconnectionstatechange = function() {
+        console.log("WebRTC Connection State: " + pc.connectionState);
+        if (pc.connectionState === 'connected') {
+            $('#statusOverlay').addClass('d-none');
+        }
+    };
+
+    pc.oniceconnectionstatechange = function() {
+        console.log("WebRTC ICE Connection State: " + pc.iceConnectionState);
+        if (pc.iceConnectionState === 'connected' || pc.iceConnectionState === 'completed') {
+            $('#statusOverlay').addClass('d-none');
+        }
+    };
+
     pc.onicecandidate = function (e) {
         if (e.candidate) {
             kycProxy.invoke('sendIceCandidate', sessionId, JSON.stringify(e.candidate), 'customer');
@@ -42,6 +71,7 @@ kycProxy.on('receiveOffer', async function (offer) {
 
     try {
         await pc.setRemoteDescription(new RTCSessionDescription(JSON.parse(offer)));
+        processQueuedCandidates();
         const answer = await pc.createAnswer();
         await pc.setLocalDescription(answer);
         kycProxy.invoke('sendAnswer', sessionId, JSON.stringify(answer));
@@ -52,8 +82,13 @@ kycProxy.on('receiveOffer', async function (offer) {
 
 kycProxy.on('receiveIceCandidate', function (candidate) {
     console.log("ICE candidate received from customer.");
-    pc.addIceCandidate(new RTCIceCandidate(JSON.parse(candidate)))
-      .catch(e => console.error("Error adding candidate: ", e));
+    if (pc && pc.remoteDescription && pc.remoteDescription.type) {
+        pc.addIceCandidate(new RTCIceCandidate(JSON.parse(candidate)))
+          .catch(e => console.error("Error adding candidate: ", e));
+    } else {
+        console.log("Queueing early ICE candidate from customer.");
+        remoteCandidatesQueue.push(candidate);
+    }
 });
 
 kycProxy.on('receiveVerificationResult', function (type, json) {
