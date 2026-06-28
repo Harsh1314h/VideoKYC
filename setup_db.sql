@@ -20,7 +20,7 @@ CREATE TABLE Customers (
     CustomerId INT IDENTITY(1,1) PRIMARY KEY,
     FullName NVARCHAR(150) NOT NULL,
     Phone VARCHAR(20) NOT NULL,
-    CreatedAt DATETIME DEFAULT GETUTCDATE()
+    CreatedAt DATETIME DEFAULT GETDATE()
 );
 GO
 
@@ -31,7 +31,7 @@ CREATE TABLE Agents (
     PasswordHash VARCHAR(256) NOT NULL,
     FullName NVARCHAR(150) NOT NULL,
     IsActive BIT DEFAULT 1,
-    CreatedAt DATETIME DEFAULT GETUTCDATE()
+    CreatedAt DATETIME DEFAULT GETDATE()
 );
 GO
 
@@ -42,7 +42,7 @@ CREATE TABLE KycSessions (
     AgentId INT NULL FOREIGN KEY REFERENCES Agents(AgentId),
     Status VARCHAR(20) NOT NULL DEFAULT 'Waiting', -- Waiting, InProgress, Approved, Rejected
     SessionToken VARCHAR(50) NOT NULL,
-    CreatedAt DATETIME DEFAULT GETUTCDATE(),
+    CreatedAt DATETIME DEFAULT GETDATE(),
     UpdatedAt DATETIME NULL,
     RejectionReason NVARCHAR(500) NULL
 );
@@ -58,7 +58,7 @@ CREATE TABLE DocumentVerifications (
     ExtractedDataJson NVARCHAR(MAX) NULL,
     ImagePath NVARCHAR(500) NULL,
     OcrText NVARCHAR(MAX) NULL,
-    CreatedAt DATETIME DEFAULT GETUTCDATE()
+    CreatedAt DATETIME DEFAULT GETDATE()
 );
 GO
 
@@ -71,7 +71,7 @@ CREATE TABLE FaceVerifications (
     ClientScore FLOAT NOT NULL DEFAULT 0,
     ServerScore FLOAT NOT NULL DEFAULT 0,
     IsVerified BIT DEFAULT 0,
-    CreatedAt DATETIME DEFAULT GETUTCDATE()
+    CreatedAt DATETIME DEFAULT GETDATE()
 );
 GO
 
@@ -86,7 +86,7 @@ CREATE TABLE VoiceVerifications (
     VoiceScore FLOAT NOT NULL DEFAULT 0,
     FinalScore FLOAT NOT NULL DEFAULT 0,
     IsVerified BIT DEFAULT 0,
-    CreatedAt DATETIME DEFAULT GETUTCDATE()
+    CreatedAt DATETIME DEFAULT GETDATE()
 );
 GO
 
@@ -97,7 +97,7 @@ CREATE TABLE KycAuditLog (
     Action NVARCHAR(150) NOT NULL,
     Details NVARCHAR(MAX) NULL,
     PerformedBy NVARCHAR(150) NOT NULL,
-    Timestamp DATETIME DEFAULT GETUTCDATE()
+    Timestamp DATETIME DEFAULT GETDATE()
 );
 GO
 

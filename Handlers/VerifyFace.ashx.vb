@@ -65,7 +65,7 @@ Namespace Handlers
                 ' Save verification details in DB
                 Using conn As System.Data.SqlClient.SqlConnection = Data.DatabaseHelper.GetConnection()
                     Dim sql As String = "INSERT INTO FaceVerifications (SessionId, LiveFramePath, DocPhotoPath, ClientScore, ServerScore, IsVerified, CreatedAt) " &
-                              "VALUES (@sid, @lp, @dp, @cs, @ss, @iv, GETUTCDATE())"
+                              "VALUES (@sid, @lp, @dp, @cs, @ss, @iv, GETDATE())"
                     conn.Execute(sql, New With {
                         .sid = sessionId,
                         .lp = "~/Uploads/" & sessionId & "/" & liveName,

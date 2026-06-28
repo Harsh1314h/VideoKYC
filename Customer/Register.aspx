@@ -47,7 +47,7 @@
                         <div class="tab-pane fade show active" id="pnlRegister" role="tabpanel">
                             <div class="mb-4">
                                 <label for="txtFullName" class="form-label text-secondary-light fw-medium">Full Name</label>
-                                <asp:TextBox ID="txtFullName" runat="server" CssClass="form-control bg-dark border-secondary-light text-white py-3 rounded-3" placeholder="Enter your full name as on ID card" MaxLength="100"></asp:TextBox>
+                                <asp:TextBox ID="txtFullName" runat="server" CssClass="form-control bg-dark border-secondary-light text-white py-3 rounded-3" placeholder="Enter your full name as on ID card" MaxLength="50"></asp:TextBox>
                             </div>
 
                             <div class="mb-4">

@@ -49,9 +49,9 @@ Partial Public Class Register
                 Throw New Exception("Please enter your name and phone number.")
             End If
 
-            ' Enforce name limit of 100 characters
-            If name.Length > 100 Then
-                Throw New Exception("Full name must not exceed 100 characters.")
+            ' Enforce name limit of 50 characters
+            If name.Length > 50 Then
+                Throw New Exception("Full name must not exceed 50 characters.")
             End If
 
             ' Validate full name contains only letters and spaces, and at least a first and last name

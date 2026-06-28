@@ -43,7 +43,7 @@ Namespace Handlers
                 ' Save verification details in DB
                 Using conn As System.Data.SqlClient.SqlConnection = Data.DatabaseHelper.GetConnection()
                     Dim sql As String = "INSERT INTO VoiceVerifications (SessionId, AudioPath, Phrase, TextScore, VoiceScore, FinalScore, IsVerified, CreatedAt) " &
-                              "VALUES (@sid, @ap, @phrase, @ts, @vs, @fs, @iv, GETUTCDATE())"
+                              "VALUES (@sid, @ap, @phrase, @ts, @vs, @fs, @iv, GETDATE())"
                     conn.Execute(sql, New With {
                         .sid = sessionId,
                         .ap = "~/Uploads/" & sessionId & "/" & originalName,

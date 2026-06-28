@@ -9,7 +9,7 @@ Namespace Services
         ' ── Customer Registration ───────────────────────────────────────────
         Public Function RegisterCustomer(fullName As String, phone As String) As Customer
             Dim sql As String = "INSERT INTO Customers (FullName, Phone, CreatedAt) " &
-                      "VALUES (@Name, @Phone, GETUTCDATE()); " &
+                      "VALUES (@Name, @Phone, GETDATE()); " &
                       "SELECT CAST(SCOPE_IDENTITY() as int);"
             
             Using conn As SqlConnection = DatabaseHelper.GetConnection()
@@ -18,7 +18,7 @@ Namespace Services
                     .CustomerId = customerId,
                     .FullName = fullName,
                     .Phone = phone,
-                    .CreatedAt = DateTime.UtcNow
+                    .CreatedAt = DateTime.Now
                 }
             End Using
         End Function
@@ -27,7 +27,7 @@ Namespace Services
         Public Function CreateSession(customerId As Integer) As String
             Dim sessionId = Guid.NewGuid().ToString()
             Dim sql As String = "INSERT INTO KycSessions (SessionId, CustomerId, Status, CreatedAt, SessionToken) " &
-                      "VALUES (@sid, @cid, 'Waiting', GETUTCDATE(), @token)"
+                      "VALUES (@sid, @cid, 'Waiting', GETDATE(), @token)"
             
             Using conn As SqlConnection = DatabaseHelper.GetConnection()
                 conn.Execute(sql, New With {
@@ -46,18 +46,18 @@ Namespace Services
             ' 1. Auto-cleanup stale sessions (no heartbeat)
             Dim cleanupSql As String = 
                 "UPDATE KycSessions " &
-                "SET Status = 'Rejected', RejectionReason = 'Customer left waiting room', UpdatedAt = GETUTCDATE() " &
+                "SET Status = 'Rejected', RejectionReason = 'Customer left waiting room', UpdatedAt = GETDATE() " &
                 "WHERE Status = 'Waiting' " &
                 "  AND (" &
-                "    (UpdatedAt IS NOT NULL AND DATEDIFF(second, UpdatedAt, GETUTCDATE()) > 30) " &
-                "    OR (UpdatedAt IS NULL AND DATEDIFF(second, CreatedAt, GETUTCDATE()) > 30) " &
+                "    (UpdatedAt IS NOT NULL AND DATEDIFF(second, UpdatedAt, GETDATE()) > 30) " &
+                "    OR (UpdatedAt IS NULL AND DATEDIFF(second, CreatedAt, GETDATE()) > 30) " &
                 "  ); " &
                 "UPDATE KycSessions " &
-                "SET Status = 'Rejected', RejectionReason = 'Call timed out / abandoned', UpdatedAt = GETUTCDATE() " &
+                "SET Status = 'Rejected', RejectionReason = 'Call timed out / abandoned', UpdatedAt = GETDATE() " &
                 "WHERE Status = 'InProgress' " &
                 "  AND (" &
-                "    (UpdatedAt IS NOT NULL AND DATEDIFF(second, UpdatedAt, GETUTCDATE()) > 60) " &
-                "    OR (UpdatedAt IS NULL AND DATEDIFF(second, CreatedAt, GETUTCDATE()) > 60) " &
+                "    (UpdatedAt IS NOT NULL AND DATEDIFF(second, UpdatedAt, GETDATE()) > 60) " &
+                "    OR (UpdatedAt IS NULL AND DATEDIFF(second, CreatedAt, GETDATE()) > 60) " &
                 "  );"
 
             Dim selectSql As String = "SELECT s.*, c.FullName As CustomerName, c.Phone As CustomerPhone " &
@@ -91,7 +91,7 @@ Namespace Services
 
         ' ── Assign Agent and Start Call ─────────────────────────────────────
         Public Sub AssignAgent(sessionId As String, agentId As Integer)
-            Dim sql As String = "UPDATE KycSessions SET AgentId = @aid, Status = 'InProgress', UpdatedAt = GETUTCDATE() " &
+            Dim sql As String = "UPDATE KycSessions SET AgentId = @aid, Status = 'InProgress', UpdatedAt = GETDATE() " &
                       "WHERE SessionId = @sid"
                       
             Using conn As SqlConnection = DatabaseHelper.GetConnection()
@@ -103,7 +103,7 @@ Namespace Services
 
         ' ── Update Session Status ───────────────────────────────────────────
         Public Sub UpdateSessionStatus(sessionId As String, status As String, Optional reason As String = Nothing)
-            Dim sql As String = "UPDATE KycSessions SET Status = @s, UpdatedAt = GETUTCDATE(), RejectionReason = @r " &
+            Dim sql As String = "UPDATE KycSessions SET Status = @s, UpdatedAt = GETDATE(), RejectionReason = @r " &
                       "WHERE SessionId = @sid"
                       
             Using conn As SqlConnection = DatabaseHelper.GetConnection()
@@ -118,7 +118,7 @@ Namespace Services
         ' ── Logging Audit Action ────────────────────────────────────────────
         Public Sub LogAudit(sessionId As String, action As String, details As String, performedBy As String)
             Dim sql As String = "INSERT INTO KycAuditLog (SessionId, Action, Details, PerformedBy, Timestamp) " &
-                      "VALUES (@sid, @act, @det, @by, GETUTCDATE())"
+                      "VALUES (@sid, @act, @det, @by, GETDATE())"
                       
             Using conn As SqlConnection = DatabaseHelper.GetConnection()
                 conn.Execute(sql, New With {
@@ -132,7 +132,7 @@ Namespace Services
 
         ' ── Keep Session Alive Heartbeat ────────────────────────────────────
         Public Sub KeepSessionAlive(sessionId As String)
-            Dim sql As String = "UPDATE KycSessions SET UpdatedAt = GETUTCDATE() WHERE SessionId = @sid"
+            Dim sql As String = "UPDATE KycSessions SET UpdatedAt = GETDATE() WHERE SessionId = @sid"
             Using conn As SqlConnection = DatabaseHelper.GetConnection()
                 conn.Execute(sql, New With {.sid = sessionId})
             End Using
@@ -141,7 +141,7 @@ Namespace Services
         ' ── Cancel All Active Sessions for a Phone Number ───────────────────
         Public Sub CancelActiveSessionsByPhone(phone As String)
             Dim sql As String = "UPDATE KycSessions " &
-                      "SET Status = 'Rejected', RejectionReason = 'Cancelled - New session started', UpdatedAt = GETUTCDATE() " &
+                      "SET Status = 'Rejected', RejectionReason = 'Cancelled - New session started', UpdatedAt = GETDATE() " &
                       "FROM KycSessions s " &
                       "INNER JOIN Customers c ON s.CustomerId = c.CustomerId " &
                       "WHERE c.Phone = @Phone AND s.Status IN ('Waiting', 'InProgress')"

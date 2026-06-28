@@ -158,7 +158,7 @@ Namespace Handlers
                                 }, trans)
                             Else
                                 Dim insertSql As String = "INSERT INTO DocumentVerifications (SessionId, DocumentType, DocumentNumber, IsVerified, ExtractedDataJson, ImagePath, OcrText, CreatedAt) " &
-                                                          "VALUES (@sid, @dt, @dn, @iv, @json, @ip, @ocr, GETUTCDATE())"
+                                                          "VALUES (@sid, @dt, @dn, @iv, @json, @ip, @ocr, GETDATE())"
                                 conn.Execute(insertSql, New With {
                                     .sid = sessionId,
                                     .dt = docType,
