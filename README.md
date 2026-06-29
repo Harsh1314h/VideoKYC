@@ -90,37 +90,39 @@ graph TD
 
 ## ⚡ Quick Start Local Setup
 
-### 1. Restore Packages & Assets
-Open terminal in the project root folder (`C:\videokyc`) and restore NuGet dependencies:
+Follow these steps to set up and run the Video KYC Platform on your local Windows machine:
+
+### 1. Restore Project Dependencies
+Open your command terminal in the project root directory and restore the NuGet packages:
 ```cmd
 .\nuget.exe restore
 ```
-Download local Tesseract OCR language models and face-api weights:
+
+### 2. Download AI Assets & Weights
+The project relies on local models for Tesseract OCR and client-side Face-API.js. Run the download script to fetch and place them automatically:
 ```powershell
 powershell -ExecutionPolicy Bypass -File download_assets.ps1
 ```
 
-### 2. Initialize Database
-Start the SQL LocalDB service and construct the database tables:
-```cmd
-sqllocaldb start MSSQLLocalDB
-sqlcmd -S "(localdb)\MSSQLLocalDB" -i setup_db.sql
-```
+### 3. Initialize SQL Server LocalDB Database
+1. Make sure your local SQL Server instance is active. If it is stopped, start it:
+   ```cmd
+   sqllocaldb start MSSQLLocalDB
+   ```
+2. Build the database structure and seed the default agent credentials using `sqlcmd`:
+   ```cmd
+   sqlcmd -S "(localdb)\MSSQLLocalDB" -i setup_db.sql
+   ```
 
-### 3. Build & Run
-Compile the application:
-```cmd
-"C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" /t:Build /p:Configuration=Debug
-```
-Start the local IIS Express server:
-```cmd
-"C:\Program Files\IIS Express\iisexpress.exe" /path:"C:\videokyc" /port:9000
-```
-Open your browser:
-* **Customer Portal**: `http://localhost:9000/Customer/Register.aspx`
-* **Officer Dashboard**: `http://localhost:9000/Agent/Login.aspx`
-  * **Username**: `officer1`
-  * **Password**: `password123`
+### 4. Build & Run via Visual Studio
+1. Open the solution file `VideoKYC.sln` in **Visual Studio 2022** (or higher).
+2. Ensure the configuration target is set to **Debug** (Any CPU).
+3. Press **F5** (or click the **IIS Express** play button at the top menu) to compile the codebase and launch the local development server.
+4. Your browser will launch automatically. You can access the interfaces using:
+   * **Customer Registration**: `http://localhost:9000/Customer/Register.aspx`
+   * **Officer Dashboard Login**: `http://localhost:9000/Agent/Login.aspx`
+     * **Username**: `officer1`
+     * **Password**: `password123`
 
 ---
 
