@@ -126,7 +126,7 @@ Namespace Hubs
                     End Using
                 End If
             Catch ex As Exception
-                ' Ignore errors during background DB synchronization
+                Serilog.Log.Error(ex, "Error in SendVerificationResult during database synchronization")
             End Try
         End Function
 
