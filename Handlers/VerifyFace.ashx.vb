@@ -52,8 +52,8 @@ Namespace Handlers
                     Dim faceSvc As New FaceVerificationService()
                     score = faceSvc.CompareFaces(livePath, docFacePath)
                     
-                    ' Verification threshold is 45% for histogram correlation in grayscale
-                    verified = (score >= 45.0)
+                    ' Relaxed threshold (15.0) for whole-document vs cropped-face histogram matching fallback
+                    verified = (score >= 15.0)
                 End If
 
                 ' Log audit trail

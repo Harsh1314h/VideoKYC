@@ -27,6 +27,10 @@ async function startFaceCapture() {
     const canvas = document.getElementById('captureCanvas');
     const context = canvas.getContext('2d');
 
+    // Set canvas dimensions to match video stream resolution for maximum face feature quality
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
+
     // Draw video frame to canvas
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
@@ -35,10 +39,10 @@ async function startFaceCapture() {
     // 1. Run client-side biometrics comparison if models are loaded
     if (modelsLoaded) {
         try {
-            console.log("Running client-side face-api.js biometric check...");
+            console.log("Running client-side face-api.js biometric check at " + canvas.width + "x" + canvas.height + "...");
             
-            // Detect face descriptor on live webcam canvas
-            const liveDetection = await faceapi.detectSingleFace(canvas)
+            // Detect face descriptor on live webcam canvas (using lower confidence for better recall in sub-optimal environments)
+            const liveDetection = await faceapi.detectSingleFace(canvas, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.15 }))
                 .withFaceLandmarks()
                 .withFaceDescriptor();
 
@@ -46,7 +50,12 @@ async function startFaceCapture() {
             const docImage = document.getElementById('imgFrontPreview');
             
             if (docImage && docImage.src && !docImage.src.endsWith('#')) {
-                const docDetection = await faceapi.detectSingleFace(docImage)
+                // Ensure document is loaded
+                if (!docImage.complete || docImage.naturalWidth === 0) {
+                    console.warn("Document image is not fully loaded in DOM yet.");
+                }
+
+                const docDetection = await faceapi.detectSingleFace(docImage, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.15 }))
                     .withFaceLandmarks()
                     .withFaceDescriptor();
 
@@ -56,9 +65,10 @@ async function startFaceCapture() {
                     
                     // Convert to percentage score
                     const score = Math.round((1 - Math.min(distance, 1)) * 100);
-                    const verified = distance < 0.50; // threshold is 0.50
+                    // Standard robust threshold for face-api.js is 0.60
+                    const verified = distance < 0.60; 
 
-                    console.log("Client Face match distance: " + distance + " | Score: " + score + "%");
+                    console.log("Client Face match distance: " + distance + " | Score: " + score + "% | Verified: " + verified);
 
                     // Send client result back to officer
                     sendVerificationResult('face', {
@@ -67,10 +77,15 @@ async function startFaceCapture() {
                         distance: distance
                     });
 
-                    $('#instructionMsg').text(verified ? 'Face Verified!' : 'Face Mismatch. Align face.');
+                    $('#instructionMsg').text(verified ? 'Face Verified Successfully!' : 'Face Mismatch. Please realign face.');
                     clientMatched = true;
                 } else {
-                    console.warn("Face not detected in webcam or document image on client side.");
+                    if (!liveDetection) {
+                        console.warn("Face NOT detected on live webcam feed.");
+                    }
+                    if (!docDetection) {
+                        console.warn("Face NOT detected on document image preview.");
+                    }
                 }
             } else {
                 console.warn("No front document photo preview available on client side.");
