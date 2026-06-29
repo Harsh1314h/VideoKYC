@@ -91,44 +91,76 @@ Namespace Services
                 Using src = Cv2.ImRead(imagePath, ImreadModes.Color)
                     If src.Empty() Then Return False
 
-                    Using gray = New Mat()
-                        Cv2.CvtColor(src, gray, ColorConversionCodes.BGR2GRAY)
-                        Cv2.EqualizeHist(gray, gray)
+                    Using cascade As New CascadeClassifier(cascadePath)
+                        ' Try rotations to find the one where the face is upright (0, 90 Clockwise, 180, 90 Counter-Clockwise)
+                        For rotationIndex As Integer = 0 To 3
+                            Using rotated = New Mat()
+                                If rotationIndex = 0 Then
+                                    src.CopyTo(rotated)
+                                ElseIf rotationIndex = 1 Then
+                                    Cv2.Rotate(src, rotated, RotateFlags.Rotate90Clockwise)
+                                ElseIf rotationIndex = 2 Then
+                                    Cv2.Rotate(src, rotated, RotateFlags.Rotate180)
+                                ElseIf rotationIndex = 3 Then
+                                    Cv2.Rotate(src, rotated, RotateFlags.Rotate90CounterClockwise)
+                                End If
 
-                        Using cascade As New CascadeClassifier(cascadePath)
-                            Dim faces = cascade.DetectMultiScale(
-                                gray,
-                                scaleFactor:=1.1,
-                                minNeighbors:=2, ' Low neighbors since document photo faces can be small/coarse
-                                flags:=HaarDetectionTypes.ScaleImage,
-                                minSize:=New Size(30, 30)
-                            )
+                                Using gray = New Mat()
+                                    Cv2.CvtColor(rotated, gray, ColorConversionCodes.BGR2GRAY)
+                                    Cv2.EqualizeHist(gray, gray)
 
-                            If faces.Length > 0 Then
-                                ' Crop the first detected face
-                                Dim faceRect = faces(0)
-                                
-                                ' Add 15% padding around the face bounding box
-                                Dim paddingX = CInt(faceRect.Width * 0.15)
-                                Dim paddingY = CInt(faceRect.Height * 0.15)
-                                
-                                Dim x = Math.Max(0, faceRect.X - paddingX)
-                                Dim y = Math.Max(0, faceRect.Y - paddingY)
-                                Dim w = Math.Min(src.Width - x, faceRect.Width + (paddingX * 2))
-                                Dim h = Math.Min(src.Height - y, faceRect.Height + (paddingY * 2))
-                                
-                                Dim cropRect As New Rect(x, y, w, h)
-                                Using croppedFace = New Mat(src, cropRect)
-                                    Cv2.ImWrite(outputPath, croppedFace)
+                                    ' Strict filter: minNeighbors=3, minSize=50x50 (to ignore tiny false positives)
+                                    Dim faces = cascade.DetectMultiScale(
+                                        gray,
+                                        scaleFactor:=1.1,
+                                        minNeighbors:=3,
+                                        flags:=HaarDetectionTypes.ScaleImage,
+                                        minSize:=New Size(45, 45)
+                                    )
+
+                                    ' Filter out faces that are disproportionately large (e.g. > 70% of the image size)
+                                    Dim validFaceRect As Nullable(Of Rect) = Nothing
+                                    For Each f As Rect In faces
+                                        If f.Width < (rotated.Width * 0.7) AndAlso f.Height < (rotated.Height * 0.7) Then
+                                            validFaceRect = f
+                                            Exit For
+                                        End If
+                                    Next
+
+                                    If validFaceRect.HasValue Then
+                                        Dim faceRect = validFaceRect.Value
+                                        
+                                        ' Add 15% padding around the face bounding box
+                                        Dim paddingX = CInt(faceRect.Width * 0.15)
+                                        Dim paddingY = CInt(faceRect.Height * 0.15)
+                                        
+                                        Dim x = Math.Max(0, faceRect.X - paddingX)
+                                        Dim y = Math.Max(0, faceRect.Y - paddingY)
+                                        Dim w = Math.Min(rotated.Width - x, faceRect.Width + (paddingX * 2))
+                                        Dim h = Math.Min(rotated.Height - y, faceRect.Height + (paddingY * 2))
+                                        
+                                        Dim cropRect As New Rect(x, y, w, h)
+                                        Using croppedFace = New Mat(rotated, cropRect)
+                                            Cv2.ImWrite(outputPath, croppedFace)
+                                        End Using
+
+                                        ' Auto-correct original card image to be rotated upright!
+                                        ' Overwriting imagePath rotates the original card image permanently.
+                                        Try
+                                            Cv2.ImWrite(imagePath, rotated)
+                                        Catch ex As Exception
+                                            ' Ignore write lock exceptions
+                                        End Try
+
+                                        Return True
+                                    End If
                                 End Using
-                                Return True
-                            End If
-                        End Using
+                            End Using
+                        Next
                     End Using
                 End Using
                 Return False
             Catch ex As Exception
-                ' Fallback to copying entire file or returning false
                 Return False
             End Try
         End Function

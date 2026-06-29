@@ -20,6 +20,55 @@ async function loadFaceModels() {
 // Call on load
 loadFaceModels();
 
+// Helper to check face detection at different rotations (0, 90, 180, 270)
+async function detectFaceWithRotations(imageElement) {
+    // 1. Try first with 0 degrees (no rotation)
+    let detection = await faceapi.detectSingleFace(imageElement, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.15 }))
+        .withFaceLandmarks()
+        .withFaceDescriptor();
+    if (detection) {
+        console.log("Face detected on document at 0 degrees rotation.");
+        return detection;
+    }
+
+    // 2. If it fails, let's create a temporary canvas to try 90, 180, and 270 degrees rotation
+    const tempCanvas = document.createElement('canvas');
+    const ctx = tempCanvas.getContext('2d');
+    const rotations = [90, 180, 270];
+
+    for (let r of rotations) {
+        if (r === 90 || r === 270) {
+            tempCanvas.width = imageElement.naturalHeight || imageElement.height;
+            tempCanvas.height = imageElement.naturalWidth || imageElement.width;
+        } else {
+            tempCanvas.width = imageElement.naturalWidth || imageElement.width;
+            tempCanvas.height = imageElement.naturalHeight || imageElement.height;
+        }
+
+        ctx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+        ctx.save();
+        ctx.translate(tempCanvas.width / 2, tempCanvas.height / 2);
+        ctx.rotate((r * Math.PI) / 180);
+        ctx.drawImage(imageElement, -imageElement.naturalWidth / 2, -imageElement.naturalHeight / 2);
+        ctx.restore();
+
+        console.log("Checking face-api on document at " + r + " degrees rotation...");
+        detection = await faceapi.detectSingleFace(tempCanvas, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.15 }))
+            .withFaceLandmarks()
+            .withFaceDescriptor();
+
+        if (detection) {
+            console.log("Face successfully detected on document at " + r + " degrees rotation!");
+            // Rotate the DOM preview image so the officer and customer see it upright!
+            $(imageElement).css('transform', 'rotate(' + r + 'deg)');
+            return detection;
+        }
+    }
+
+    console.warn("Face could not be detected on document image in any rotation.");
+    return null;
+}
+
 async function startFaceCapture() {
     $('#instructionMsg').text('Analyzing face... Please look directly at the camera.');
 
@@ -55,9 +104,8 @@ async function startFaceCapture() {
                     console.warn("Document image is not fully loaded in DOM yet.");
                 }
 
-                const docDetection = await faceapi.detectSingleFace(docImage, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.15 }))
-                    .withFaceLandmarks()
-                    .withFaceDescriptor();
+                // Detect face using auto-rotation helper
+                const docDetection = await detectFaceWithRotations(docImage);
 
                 if (liveDetection && docDetection) {
                     // Compute Euclidean distance (0.0 = identical, 1.0 = completely different)
