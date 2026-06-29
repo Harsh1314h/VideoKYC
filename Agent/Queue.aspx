@@ -96,6 +96,36 @@
                         </EmptyDataTemplate>
                     </asp:GridView>
                 </div>
+
+                <!-- Approved KYC History Panel -->
+                <div class="d-flex justify-content-between align-items-center mt-5 mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-1 text-primary">Approved KYC History</h2>
+                        <p class="text-secondary-light mb-0">List of all successfully completed and approved video verification sessions.</p>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4">
+                    <asp:GridView ID="gvApproved" runat="server" AutoGenerateColumns="False" 
+                                  CssClass="table table-dark table-hover border-0 mb-0" 
+                                  GridLines="None" DataKeyNames="SessionId">
+                        <Columns>
+                            <asp:BoundField DataField="CustomerName" HeaderText="Customer Name" HeaderStyle-CssClass="text-secondary-light fw-semibold" ItemStyle-CssClass="py-3 fs-6" />
+                            <asp:BoundField DataField="CustomerPhone" HeaderText="Phone" HeaderStyle-CssClass="text-secondary-light fw-semibold" ItemStyle-CssClass="py-3" />
+                            <asp:BoundField DataField="UpdatedAt" HeaderText="Approved At" HeaderStyle-CssClass="text-secondary-light fw-semibold" ItemStyle-CssClass="py-3 text-secondary-light fs-7" DataFormatString="{0:hh:mm:ss tt}" />
+                            <asp:TemplateField HeaderText="Status" HeaderStyle-CssClass="text-secondary-light fw-semibold text-end" ItemStyle-CssClass="text-end py-3">
+                                <ItemTemplate>
+                                    <span class="badge bg-success text-dark px-3 py-2 rounded-pill fw-bold">Approved ✓</span>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                        </Columns>
+                        <EmptyDataTemplate>
+                            <div class="text-center py-4">
+                                <h5 class="fw-bold text-secondary-light mb-0">No approved KYC records found</h5>
+                            </div>
+                        </EmptyDataTemplate>
+                    </asp:GridView>
+                </div>
             </div>
         </div>
     </form>

@@ -201,5 +201,18 @@ Namespace Services
                 Return docVerified AndAlso faceVerified AndAlso voiceVerified
             End Using
         End Function
+
+        ' ── Get All Approved Sessions ───────────────────────────────────────
+        Public Function GetApprovedSessions() As IEnumerable(Of KycSession)
+            Dim sql As String = "SELECT s.*, c.FullName As CustomerName, c.Phone As CustomerPhone " &
+                      "FROM KycSessions s " &
+                      "INNER JOIN Customers c ON s.CustomerId = c.CustomerId " &
+                      "WHERE s.Status = 'Approved' " &
+                      "ORDER BY s.UpdatedAt DESC"
+                      
+            Using conn As SqlConnection = DatabaseHelper.GetConnection()
+                Return conn.Query(Of KycSession)(sql)
+            End Using
+        End Function
     End Class
 End Namespace

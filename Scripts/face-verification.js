@@ -84,6 +84,7 @@ async function startFaceCapture() {
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     var clientMatched = false;
+    var clientResult = null;
 
     // 1. Run client-side biometrics comparison if models are loaded
     if (modelsLoaded) {
@@ -111,19 +112,18 @@ async function startFaceCapture() {
                     // Compute Euclidean distance (0.0 = identical, 1.0 = completely different)
                     const distance = faceapi.euclideanDistance(liveDetection.descriptor, docDetection.descriptor);
                     
-                    // Convert to percentage score
-                    const score = Math.round((1 - Math.min(distance, 1)) * 100);
                     // Standard robust threshold for face-api.js is 0.60
-                    const verified = distance < 0.60; 
+                    const faceApiThreshold = 0.60;
+                    const score = Math.round(Math.max(0, Math.min(100, 100 - ((distance / faceApiThreshold) * 50))));
+                    const verified = score >= 50; 
 
                     console.log("Client Face match distance: " + distance + " | Score: " + score + "% | Verified: " + verified);
 
-                    // Send client result back to officer
-                    sendVerificationResult('face', {
+                    clientResult = {
                         verified: verified,
                         score: score,
                         distance: distance
-                    });
+                    };
 
                     $('#instructionMsg').text(verified ? 'Face Verified Successfully!' : 'Face Mismatch. Please realign face.');
                     clientMatched = true;
@@ -148,6 +148,9 @@ async function startFaceCapture() {
         var fd = new FormData();
         fd.append('frame', blob, 'live_frame.jpg');
         fd.append('sessionId', sessionId);
+        fd.append('clientScore', clientResult ? clientResult.score.toString() : '0');
+        fd.append('clientVerified', clientResult ? clientResult.verified.toString() : 'false');
+        fd.append('clientDistance', clientResult ? clientResult.distance.toString() : '');
 
         fetch('/Handlers/VerifyFace.ashx', {
             method: 'POST',
@@ -157,25 +160,22 @@ async function startFaceCapture() {
         .then(data => {
             console.log("Server Face Verification result: ", data);
             
-            // If client-side did not verify, use server result
-            if (!clientMatched) {
-                var serverScore = Math.round(data.serverScore);
-                var verified = data.verified;
-                
-                sendVerificationResult('face', {
-                    verified: verified,
-                    score: serverScore,
-                    distance: 1.0 - (data.serverScore / 100)
-                });
-                
-                $('#instructionMsg').text(verified ? 'Face Verified Successfully!' : 'Face Match Failed. Check lighting.');
-            }
+            var finalScore = Math.round(data.score != null ? data.score : data.serverScore);
+            var verified = data.verified;
+            
+            sendVerificationResult('face', {
+                verified: verified,
+                score: finalScore,
+                distance: clientResult ? clientResult.distance : (1.0 - (finalScore / 100)),
+                clientScore: data.clientScore,
+                serverScore: data.serverScore
+            });
+            
+            $('#instructionMsg').text(verified ? 'Face Verified Successfully!' : (data.errorMsg || 'Face Match Failed. Please realign face and try again.'));
         })
         .catch(err => {
             console.error("Server Face Verification failed: ", err);
-            if (!clientMatched) {
-                $('#instructionMsg').text('Face verification failed. Check lighting.');
-            }
+            $('#instructionMsg').text('Face verification could not be saved. Please try again.');
         });
     }, 'image/jpeg');
 }

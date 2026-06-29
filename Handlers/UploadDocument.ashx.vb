@@ -136,11 +136,13 @@ Namespace Handlers
                             If side = "front" AndAlso System.IO.File.Exists(originalPath) Then
                                 Dim refFacePath = Path.Combine(uploadsDir, "doc_face.jpg")
                                 Dim faceSvc As New FaceVerificationService()
-                                Dim croppedSuccessfully = faceSvc.CropFaceFromImage(originalPath, refFacePath)
+                                Dim croppedSuccessfully = faceSvc.CropFaceFromImage(originalPath, refFacePath, True)
                                  
                                 If Not croppedSuccessfully Then
-                                    ' Fallback: Copy the entire card image if face detection failed
-                                    System.IO.File.Copy(originalPath, refFacePath, True)
+                                    ' Do not store a full document as the face reference; that makes face matching fail later.
+                                    If System.IO.File.Exists(refFacePath) Then
+                                        System.IO.File.Delete(refFacePath)
+                                    End If
                                 End If
                             End If
 

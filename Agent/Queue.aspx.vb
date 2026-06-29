@@ -7,6 +7,7 @@ Partial Public Class Queue
     Protected gvSessions As Global.System.Web.UI.WebControls.GridView
     Protected pnlActiveSessions As Global.System.Web.UI.WebControls.Panel
     Protected gvActiveSessions As Global.System.Web.UI.WebControls.GridView
+    Protected gvApproved As Global.System.Web.UI.WebControls.GridView
 
     Private ReadOnly _sessionSvc As New SessionService()
 
@@ -58,6 +59,9 @@ Partial Public Class Queue
 
             gvSessions.DataSource = _sessionSvc.GetWaitingSessions()
             gvSessions.DataBind()
+
+            gvApproved.DataSource = _sessionSvc.GetApprovedSessions()
+            gvApproved.DataBind()
         Catch
             ' Handle errors if database is locked
         End Try
