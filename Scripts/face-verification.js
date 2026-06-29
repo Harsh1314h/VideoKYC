@@ -112,7 +112,7 @@ async function startFaceCapture() {
             // If client-side did not verify, use server result
             if (!clientMatched) {
                 var serverScore = Math.round(data.serverScore);
-                var verified = data.serverScore >= 45.0;
+                var verified = data.verified;
                 
                 sendVerificationResult('face', {
                     verified: verified,

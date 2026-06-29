@@ -151,8 +151,16 @@ Namespace Services
             End Using
         End Sub
 
-        ' ── Get All Active Sessions for an Agent ────────────────────────────
         Public Function GetActiveSessionsForAgent(agentId As Integer) As IEnumerable(Of KycSession)
+            Dim cleanupSql As String = 
+                "UPDATE KycSessions " &
+                "SET Status = 'Rejected', RejectionReason = 'Call timed out / abandoned', UpdatedAt = GETDATE() " &
+                "WHERE Status = 'InProgress' " &
+                "  AND (" &
+                "    (UpdatedAt IS NOT NULL AND DATEDIFF(second, UpdatedAt, GETDATE()) > 15) " &
+                "    OR (UpdatedAt IS NULL AND DATEDIFF(second, CreatedAt, GETDATE()) > 15) " &
+                "  );"
+
             Dim sql As String = "SELECT s.*, c.FullName As CustomerName, c.Phone As CustomerPhone " &
                       "FROM KycSessions s " &
                       "INNER JOIN Customers c ON s.CustomerId = c.CustomerId " &
@@ -160,6 +168,11 @@ Namespace Services
                       "ORDER BY s.UpdatedAt DESC"
                       
             Using conn As SqlConnection = DatabaseHelper.GetConnection()
+                Try
+                    conn.Execute(cleanupSql)
+                Catch ex As Exception
+                    ' Ignore database errors on auto-cleanup
+                End Try
                 Return conn.Query(Of KycSession)(sql, New With {.aid = agentId})
             End Using
         End Function
