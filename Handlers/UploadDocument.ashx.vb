@@ -132,10 +132,16 @@ Namespace Handlers
                                 result.DocumentNumber = finalDocNumber
                             End If
 
-                            ' Save the front document photo image as doc_face.jpg
+                            ' Save the cropped face photo from the front document card as doc_face.jpg
                             If side = "front" AndAlso System.IO.File.Exists(originalPath) Then
                                 Dim refFacePath = Path.Combine(uploadsDir, "doc_face.jpg")
-                                System.IO.File.Copy(originalPath, refFacePath, True)
+                                Dim faceSvc As New FaceVerificationService()
+                                Dim croppedSuccessfully = faceSvc.CropFaceFromImage(originalPath, refFacePath)
+                                 
+                                If Not croppedSuccessfully Then
+                                    ' Fallback: Copy the entire card image if face detection failed
+                                    System.IO.File.Copy(originalPath, refFacePath, True)
+                                End If
                             End If
 
                             ' Save verification details in DB

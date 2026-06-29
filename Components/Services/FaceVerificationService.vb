@@ -78,5 +78,59 @@ Namespace Services
                 Return 0
             End Try
         End Function
+
+        ''' <summary>
+        ''' Detects and crops the face from a document or webcam frame using Haar Cascade.
+        ''' Saves the cropped face to the specified output path.
+        ''' </summary>
+        Public Function CropFaceFromImage(imagePath As String, outputPath As String) As Boolean
+            Try
+                Dim cascadePath As String = System.Web.HttpContext.Current.Server.MapPath("~/models/haarcascade_frontalface_default.xml")
+                If Not System.IO.File.Exists(cascadePath) Then Return False
+
+                Using src = Cv2.ImRead(imagePath, ImreadModes.Color)
+                    If src.Empty() Then Return False
+
+                    Using gray = New Mat()
+                        Cv2.CvtColor(src, gray, ColorConversionCodes.BGR2GRAY)
+                        Cv2.EqualizeHist(gray, gray)
+
+                        Using cascade As New CascadeClassifier(cascadePath)
+                            Dim faces = cascade.DetectMultiScale(
+                                gray,
+                                scaleFactor:=1.1,
+                                minNeighbors:=2, ' Low neighbors since document photo faces can be small/coarse
+                                flags:=HaarDetectionTypes.ScaleImage,
+                                minSize:=New Size(30, 30)
+                            )
+
+                            If faces.Length > 0 Then
+                                ' Crop the first detected face
+                                Dim faceRect = faces(0)
+                                
+                                ' Add 15% padding around the face bounding box
+                                Dim paddingX = CInt(faceRect.Width * 0.15)
+                                Dim paddingY = CInt(faceRect.Height * 0.15)
+                                
+                                Dim x = Math.Max(0, faceRect.X - paddingX)
+                                Dim y = Math.Max(0, faceRect.Y - paddingY)
+                                Dim w = Math.Min(src.Width - x, faceRect.Width + (paddingX * 2))
+                                Dim h = Math.Min(src.Height - y, faceRect.Height + (paddingY * 2))
+                                
+                                Dim cropRect As New Rect(x, y, w, h)
+                                Using croppedFace = New Mat(src, cropRect)
+                                    Cv2.ImWrite(outputPath, croppedFace)
+                                End Using
+                                Return True
+                            End If
+                        End Using
+                    End Using
+                End Using
+                Return False
+            Catch ex As Exception
+                ' Fallback to copying entire file or returning false
+                Return False
+            End Try
+        End Function
     End Class
 End Namespace

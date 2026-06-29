@@ -32,6 +32,11 @@ Namespace Handlers
                 Dim livePath = Path.Combine(uploadsDir, liveName)
                 file.SaveAs(livePath)
 
+                Dim faceSvc As New FaceVerificationService()
+                Dim liveFacePath = Path.Combine(uploadsDir, "live_face_cropped.jpg")
+                Dim liveCroppedSuccessfully = faceSvc.CropFaceFromImage(livePath, liveFacePath)
+                Dim compareLivePath = If(liveCroppedSuccessfully, liveFacePath, livePath)
+
                 ' Locate reference document face photo
                 Dim docFaceName = "doc_face.jpg"
                 Dim docFacePath = Path.Combine(uploadsDir, docFaceName)
@@ -49,11 +54,12 @@ Namespace Handlers
                 Dim verified = False
 
                 If System.IO.File.Exists(docFacePath) Then
-                    Dim faceSvc As New FaceVerificationService()
-                    score = faceSvc.CompareFaces(livePath, docFacePath)
+                    score = faceSvc.CompareFaces(compareLivePath, docFacePath)
                     
-                    ' Relaxed threshold (15.0) for whole-document vs cropped-face histogram matching fallback
-                    verified = (score >= 15.0)
+                    ' If we successfully cropped both faces, comparison is highly accurate (threshold: 35.0)
+                    ' Otherwise, use relaxed threshold (15.0) for whole-card fallback matching
+                    Dim threshold = If(liveCroppedSuccessfully, 35.0, 15.0)
+                    verified = (score >= threshold)
                 End If
 
                 ' Log audit trail

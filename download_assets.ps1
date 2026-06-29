@@ -29,6 +29,7 @@ $faceFiles = @{
     "face_landmark_68_model-shard1" = "https://github.com/justadudewhohacks/face-api.js/raw/master/weights/face_landmark_68_model-shard1"
     "face_recognition_model-weights_manifest.json" = "https://github.com/justadudewhohacks/face-api.js/raw/master/weights/face_recognition_model-weights_manifest.json"
     "face_recognition_model-shard1" = "https://github.com/justadudewhohacks/face-api.js/raw/master/weights/face_recognition_model-shard1"
+    "haarcascade_frontalface_default.xml" = "https://raw.githubusercontent.com/opencv/opencv/master/data/haarcascades/haarcascade_frontalface_default.xml"
 }
 
 # Download Tesseract models
