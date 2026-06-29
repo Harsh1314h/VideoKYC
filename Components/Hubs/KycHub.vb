@@ -1,6 +1,8 @@
 Imports System.Collections.Generic
 Imports System.Linq
 Imports System.Threading.Tasks
+Imports System.Data.SqlClient
+Imports Dapper
 Imports Microsoft.AspNet.SignalR
 Imports VideoKYC.Services
 
@@ -101,25 +103,52 @@ Namespace Hubs
             If Not String.IsNullOrEmpty(agentConn) Then
                 Await Clients.Client(agentConn).receiveVerificationResult(resultType, resultJson)
             End If
+
+            ' Synchronize database state with client-side verified result
+            Try
+                Dim resultObj = Newtonsoft.Json.Linq.JObject.Parse(resultJson)
+                Dim isVerifiedResult As Boolean = False
+                If resultObj("verified") IsNot Nothing Then
+                    isVerifiedResult = resultObj("verified").Value(Of Boolean)()
+                ElseIf resultObj("IsVerified") IsNot Nothing Then
+                    isVerifiedResult = resultObj("IsVerified").Value(Of Boolean)()
+                End If
+
+                If isVerifiedResult Then
+                    Using conn As System.Data.SqlClient.SqlConnection = Data.DatabaseHelper.GetConnection()
+                        If resultType = "face" Then
+                            conn.Execute("UPDATE FaceVerifications SET IsVerified = 1 WHERE SessionId = @sid", New With {.sid = sessionId})
+                        ElseIf resultType = "voice" Then
+                            conn.Execute("UPDATE VoiceVerifications SET IsVerified = 1 WHERE SessionId = @sid", New With {.sid = sessionId})
+                        ElseIf resultType = "document" Then
+                            conn.Execute("UPDATE DocumentVerifications SET IsVerified = 1 WHERE SessionId = @sid", New With {.sid = sessionId})
+                        End If
+                    End Using
+                End If
+            Catch ex As Exception
+                ' Ignore errors during background DB synchronization
+            End Try
         End Function
 
         ' ── KYC Decisions (Agent ─► Customer & DB) ───────────────────────────
 
-        Public Async Function ApproveKyc(sessionId As String) As Task
+        Public Async Function ApproveKyc(sessionId As String) As Task(Of Boolean)
             Dim svc As New SessionService()
             If Not svc.CanApproveSession(sessionId) Then
                 Await Clients.Caller.showApprovalError("Cannot Approve KYC: All checks (Document OCR, Biometric Face Match, and Voice Verification) must be successfully verified before approval.")
-                Return
+                Return False
             End If
             
             Await Clients.Group(sessionId).kycApproved()
             svc.UpdateSessionStatus(sessionId, "Approved")
+            Return True
         End Function
 
-        Public Async Function RejectKyc(sessionId As String, reason As String) As Task
+        Public Async Function RejectKyc(sessionId As String, reason As String) As Task(Of Boolean)
             Await Clients.Group(sessionId).kycRejected(reason)
             Dim svc As New SessionService()
             svc.UpdateSessionStatus(sessionId, "Rejected", reason)
+            Return True
         End Function
 
         Public Sub KeepAlive(sessionId As String)

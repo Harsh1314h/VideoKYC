@@ -179,9 +179,11 @@ function approveKyc() {
     }
     if (confirm("Are you sure you want to APPROVE this customer's KYC?")) {
         kycProxy.invoke('approveKyc', sessionId)
-            .done(function () {
-                alert("KYC Session Approved successfully.");
-                window.location.href = "Queue.aspx";
+            .done(function (success) {
+                if (success) {
+                    alert("KYC Session Approved successfully.");
+                    window.location.href = "Queue.aspx";
+                }
             });
     }
 }
@@ -196,9 +198,11 @@ function rejectKyc() {
     
     if (confirm("Are you sure you want to REJECT this customer's KYC?")) {
         kycProxy.invoke('rejectKyc', sessionId, reason)
-            .done(function () {
-                alert("KYC Session Rejected.");
-                window.location.href = "Queue.aspx";
+            .done(function (success) {
+                if (success) {
+                    alert("KYC Session Rejected.");
+                    window.location.href = "Queue.aspx";
+                }
             });
     }
 }
