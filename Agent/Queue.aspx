@@ -115,7 +115,7 @@
                             <asp:BoundField DataField="UpdatedAt" HeaderText="Approved At" HeaderStyle-CssClass="text-secondary-light fw-semibold" ItemStyle-CssClass="py-3 text-secondary-light fs-7" DataFormatString="{0:hh:mm:ss tt}" />
                             <asp:TemplateField HeaderText="Status" HeaderStyle-CssClass="text-secondary-light fw-semibold text-end" ItemStyle-CssClass="text-end py-3">
                                 <ItemTemplate>
-                                    <span class="badge bg-success text-dark px-3 py-2 rounded-pill fw-bold">Approved ✓</span>
+                                    <span class="badge bg-success text-dark px-3 py-2 rounded-pill fw-bold">Approved &#10003;</span>
                                 </ItemTemplate>
                             </asp:TemplateField>
                         </Columns>
