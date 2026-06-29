@@ -37,26 +37,42 @@ Namespace Handlers
                 Dim voiceSvc As New VoiceVerificationService()
                 Dim score = voiceSvc.AnalyzeVoice(originalPath)
 
+                ' Read spoken text and text score from client request
+                Dim spokenText As String = context.Request.Form("spokenText")
+                Dim textScoreStr As String = context.Request.Form("textScore")
+                Dim textScore As Double = 0.0
+                Double.TryParse(textScoreStr, textScore)
+
+                ' Calculate final combined voice score (60% text speech-to-text matching, 40% acoustic MFCC match)
+                Dim textWeight As Double = 0.6
+                Dim voiceWeight As Double = 0.4
+                Dim finalScore As Double = (textScore * textWeight) + (score * voiceWeight)
+                Dim verified As Boolean = (finalScore >= 70.0)
+
                 ' Log audit trail
                 Dim sessionSvc As New SessionService()
-                sessionSvc.LogAudit(sessionId, "Voice Recording Uploaded", "Uploaded voice clip for challenge phrase verification. Score: " & score & "%.", "Customer")
+                sessionSvc.LogAudit(sessionId, "Voice Recording Uploaded", "Uploaded voice clip for challenge phrase verification. Score: " & Math.Round(finalScore, 2) & "%.", "Customer")
+                
                 ' Save verification details in DB
                 Using conn As System.Data.SqlClient.SqlConnection = Data.DatabaseHelper.GetConnection()
-                    Dim sql As String = "INSERT INTO VoiceVerifications (SessionId, AudioPath, Phrase, TextScore, VoiceScore, FinalScore, IsVerified, CreatedAt) " &
-                              "VALUES (@sid, @ap, @phrase, @ts, @vs, @fs, @iv, GETDATE())"
+                    Dim sql As String = "INSERT INTO VoiceVerifications (SessionId, AudioPath, Phrase, SpokenText, TextScore, VoiceScore, FinalScore, IsVerified, CreatedAt) " &
+                              "VALUES (@sid, @ap, @phrase, @st, @ts, @vs, @fs, @iv, GETDATE())"
                     conn.Execute(sql, New With {
                         .sid = sessionId,
                         .ap = "~/Uploads/" & sessionId & "/" & originalName,
                         .phrase = phrase,
-                        .ts = 100.0,
+                        .st = spokenText,
+                        .ts = textScore,
                         .vs = score,
-                        .fs = score,
-                        .iv = If(score >= 70.0, 1, 0)
+                        .fs = finalScore,
+                        .iv = If(verified, 1, 0)
                     })
                 End Using
 
                 responseJson = JsonConvert.SerializeObject(New With {
-                    .mfccScore = score
+                    .mfccScore = score,
+                    .finalScore = finalScore,
+                    .verified = verified
                 })
 
             Catch ex As Exception

@@ -108,11 +108,14 @@ $(document).ready(function () {
 });
 
 function uploadVoiceClip(phrase) {
+    var voice = window._pendingVoice;
     var blob = new Blob(audioChunks, { type: 'audio/webm' });
     var fd = new FormData();
     fd.append('audio', blob, 'voice.webm');
     fd.append('sessionId', sessionId);
     fd.append('phrase', phrase);
+    fd.append('spokenText', voice.spokenText);
+    fd.append('textScore', voice.textScore);
 
     console.log("Uploading voice clip to server handler...");
 
@@ -124,13 +127,8 @@ function uploadVoiceClip(phrase) {
     .then(serverResult => {
         console.log("Server Voice Analysis results: ", serverResult);
         
-        var voice = window._pendingVoice;
-        var textWeight = 0.6;
-        var voiceWeight = 0.4;
-        
-        // Final Score calculation
-        var final = (voice.textScore * textWeight) + (serverResult.mfccScore * voiceWeight);
-        var verified = final >= 70.0;
+        var final = serverResult.finalScore;
+        var verified = serverResult.verified;
 
         // Reset UI buttons
         $('#voiceInstructions').addClass('d-none');
